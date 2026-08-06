@@ -33,6 +33,9 @@ El toolchain el fixa `mise.toml` (node 24.16.0, pnpm 11.15.0). No hi ha instal·
 - **Les xifres tenen font.** Tot el que és una dada dura viu a `src/lib/site.js` (`FACTS`,
   `CENTRE`, `SOURCES`), i les discrepàncies entre fonts es documenten a `/fonts` en comptes de
   triar-ne una en silenci.
+- **El peu porta el crèdit d'autoria.** `.colophon__author`, amb la icona
+  `public/pearpages-icon.png` i l'enllaç a `pearpages.com`, és el mateix crèdit que porten tots
+  els llocs de pearpages. No s'ha de perdre en cap refactor del colofó.
 
 ## Estructura
 

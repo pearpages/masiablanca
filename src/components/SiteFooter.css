@@ -16,7 +16,8 @@
     grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
   }
 
-  .colophon__legal {
+  .colophon__legal,
+  .colophon__author {
     grid-column: 1 / -1;
   }
 }
@@ -69,4 +70,31 @@
   line-height: 1.55;
   color: var(--text-muted);
   max-width: 78ch;
+}
+
+/* Crèdit d'autoria, comú a tots els llocs de pearpages. */
+.colophon__author {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2xs);
+  margin-block-start: var(--sp-m);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.colophon__author img {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.colophon__author a {
+  color: var(--text);
+  text-decoration-color: var(--rule-strong);
+}
+
+.colophon__author a:hover {
+  color: var(--accent);
 }

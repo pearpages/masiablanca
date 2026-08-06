@@ -73,8 +73,13 @@ for (const file of pages) {
   for (const tag of html.match(/<img[^>]*>/g) ?? []) {
     imgCount++;
     const alt = /alt="([^"]*)"/.exec(tag)?.[1];
+    // Una imatge decorativa HA de portar alt="" perquè els lectors de pantalla
+    // la saltin; només és un error si no s'hi marca explícitament com a tal.
+    const decorative = /aria-hidden="true"|role="presentation"/.test(tag);
     if (alt === undefined) fail(`${url}: <img> sense atribut alt`);
-    else if (alt.trim() === '') fail(`${url}: <img> amb alt buit`);
+    else if (alt.trim() === '' && !decorative) {
+      fail(`${url}: <img> amb alt buit i sense aria-hidden/role="presentation"`);
+    }
     if (!/width="/.test(tag) || !/height="/.test(tag)) {
       fail(`${url}: <img> sense width/height (provoca CLS)`);
     }
