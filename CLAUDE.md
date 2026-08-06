@@ -1,4 +1,4 @@
-# masiablanca.pages.ninja
+# masiablanca.soms.cat
 
 Lloc estàtic divulgatiu, **tot en català**, sobre la reserva marina de la Masia Blanca — el
 grapissar del Vendrell, davant de Coma-ruga i el Francàs. Història, context i catàleg il·lustrat
@@ -83,8 +83,14 @@ Tipografies autoallotjades: Bricolage Grotesque (display), Newsreader (text) i I
 
 Push a `main` → `.github/workflows/deploy.yml` → GitHub Pages. El domini el fixa `public/CNAME`.
 
-DNS necessari: un registre **CNAME** `masiablanca` → `pearpages.github.io`. Després, a
-Settings → Pages, posar-hi el domini i activar *Enforce HTTPS*.
+DNS necessari, a la zona **soms.cat**: un registre `CNAME` amb nom `masiablanca` que apunti a
+`pearpages.github.io.` (amb el punt final si el proveïdor demana FQDN). Després, a
+Settings → Pages, posar-hi `masiablanca.soms.cat` com a domini personalitzat i, quan la
+verificació passi, activar *Enforce HTTPS*.
+
+Si algun dia es canvia el domini, cal tocar-ho a `public/CNAME`, `astro.config.mjs`,
+`src/lib/site.js`, `public/robots.txt` i `scripts/check-build.mjs` — hi ha una constant a cada
+lloc i el comprovador falla si el canonical no hi coincideix.
 
 ## Estat
 

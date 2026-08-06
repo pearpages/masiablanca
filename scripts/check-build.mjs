@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
-const SITE = 'https://masiablanca.pages.ninja';
+const SITE = 'https://masiablanca.soms.cat';
 
 const errors = [];
 const fail = (msg) => errors.push(msg);

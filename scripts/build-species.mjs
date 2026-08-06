@@ -25,7 +25,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ASSETS = path.join(ROOT, 'src', 'assets', 'peixos');
 const OUT = path.join(ROOT, 'src', 'data', 'species.generated.json');
 
-const UA = 'masiablanca.pages.ninja/1.0 (https://masiablanca.pages.ninja; pere@soms.cat)';
+const UA = 'masiablanca.soms.cat/1.0 (https://masiablanca.soms.cat; pere@soms.cat)';
 const CA = 'https://ca.wikipedia.org/w/api.php';
 const COMMONS = 'https://commons.wikimedia.org/w/api.php';
 

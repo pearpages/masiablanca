@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://masiablanca.pages.ninja/sitemap-index.xml
+Sitemap: https://masiablanca.soms.cat/sitemap-index.xml

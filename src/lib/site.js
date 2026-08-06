@@ -1,7 +1,7 @@
 /** Site-wide constants and the reserve's hard data, cited to their source. */
 
 export const SITE = {
-  url: 'https://masiablanca.pages.ninja',
+  url: 'https://masiablanca.soms.cat',
   name: 'La Masia Blanca',
   longName: 'Reserva marina de la Masia Blanca',
   tagline: 'El grapissar del Vendrell',

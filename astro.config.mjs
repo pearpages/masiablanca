@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-export const SITE = 'https://masiablanca.pages.ninja';
+export const SITE = 'https://masiablanca.soms.cat';
 
 export default defineConfig({
   site: SITE,

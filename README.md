@@ -5,7 +5,7 @@ de les platges de Coma-ruga i el Francàs (Baix Penedès). Història, context i 
 il·lustrat de 69 espècies de peixos, cadascuna enllaçada a la Viquipèdia i il·lustrada amb
 fotografies de Wikimedia Commons publicades amb la seva autoria i llicència.
 
-→ **[masiablanca.pages.ninja](https://masiablanca.pages.ninja)**
+→ **[masiablanca.soms.cat](https://masiablanca.soms.cat)**
 
 ## Posar-hi mà
 
@@ -31,9 +31,9 @@ Les instruccions de treball detallades són a [`CLAUDE.md`](CLAUDE.md).
 
 Els textos són originals. Les fotografies provenen de Wikimedia Commons i es reprodueixen amb
 l'autoria i la llicència de cada autor, detallades a
-[/credits](https://masiablanca.pages.ninja/credits). Els noms populars catalans procedeixen de la
+[/credits](https://masiablanca.soms.cat/credits). Els noms populars catalans procedeixen de la
 Viquipèdia (CC BY-SA 4.0). Totes les fonts són a
-[/fonts](https://masiablanca.pages.ninja/fonts).
+[/fonts](https://masiablanca.soms.cat/fonts).
 
 És un lloc divulgatiu independent, sense cap vinculació oficial amb el Ministeri d'Agricultura,
 Pesca i Alimentació ni amb l'Ajuntament del Vendrell.
