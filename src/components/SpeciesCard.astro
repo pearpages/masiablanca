@@ -1,0 +1,150 @@
+---
+import { Image } from 'astro:assets';
+import DepthBand from './DepthBand.astro';
+
+const { species: s, eager = false } = Astro.props;
+---
+
+<article class="card" data-habitat={s.habitat} data-nom={s.nom.toLowerCase()} data-sci={s.cientific.toLowerCase()} data-iucn={s.iucn ?? ''}>
+  <a class="card__hit" href={s.url}>
+    <span class="visually-hidden">{s.nom}</span>
+  </a>
+
+  <div class="card__media">
+    {
+      s.lead ? (
+        <Image
+          src={s.lead.asset}
+          alt={s.altText}
+          widths={[280, 420, 640]}
+          sizes="(min-width: 62rem) 20rem, (min-width: 38rem) 42vw, 88vw"
+          loading={eager ? 'eager' : 'lazy'}
+          format="webp"
+          quality={72}
+        />
+      ) : (
+        <span class="card__nomedia label">Sense imatge lliure</span>
+      )
+    }
+    {s.iucnInfo && s.iucnInfo.to >= 2 && (
+      <span class="card__iucn data" title={s.iucnInfo.nom}>{s.iucnInfo.curt}</span>
+    )}
+  </div>
+
+  <div class="card__body">
+    <h3 class="card__nom">{s.nom}</h3>
+    <p class="card__sci"><i lang="la">{s.cientific}</i></p>
+    <p class="card__resum">{s.resum}</p>
+    <div class="card__depth">
+      <DepthBand from={s.profunditat[0]} to={s.profunditat[1]} colour={s.habitatInfo.color} compact />
+      <span class="data card__range">{s.profunditatText}</span>
+    </div>
+  </div>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-raised);
+    border: 1px solid var(--rule);
+    transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+  }
+
+  .card:hover {
+    border-color: var(--rule-strong);
+    transform: translateY(-2px);
+  }
+
+  .card:has(.card__hit:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .card__hit {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  .card__hit:focus-visible {
+    outline: none;
+  }
+
+  .card__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background-color: var(--bg-alt);
+    overflow: hidden;
+  }
+
+  .card__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: scale 0.6s var(--ease);
+  }
+
+  .card:hover .card__media :global(img) {
+    scale: 1.04;
+  }
+
+  .card__nomedia {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    font-size: 0.6rem;
+  }
+
+  .card__iucn {
+    position: absolute;
+    inset-block-start: var(--sp-2xs);
+    inset-inline-end: var(--sp-2xs);
+    padding: 0.1rem 0.4rem;
+    background-color: var(--c-corallina-deep);
+    color: #fff;
+    font-weight: 500;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+  }
+
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: var(--sp-s);
+  }
+
+  .card__nom {
+    font-size: var(--step-1);
+    line-height: 1.05;
+  }
+
+  .card__sci {
+    margin-block-start: 0.1rem;
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+
+  .card__resum {
+    margin-block-start: var(--sp-2xs);
+    font-size: var(--step--1);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .card__depth {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: var(--sp-2xs);
+    margin-block-start: var(--sp-s);
+  }
+
+  .card__range {
+    color: var(--text-muted);
+    font-size: 0.66rem;
+    white-space: nowrap;
+  }
+</style>

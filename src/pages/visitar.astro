@@ -1,0 +1,122 @@
+---
+import Base from '../layouts/Base.astro';
+import { CENTRE, FACTS, sourceByKey } from '../lib/site.js';
+import '../styles/article.css';
+
+const description =
+  'Com visitar la reserva marina de la Masia Blanca: l’Aula Aquàtica del Vendrell, snorkel a ' +
+  'Coma-ruga i el Francàs, què hi està permès i què no, i com mirar sense fer malbé res.';
+---
+
+<Base
+  title="Visitar-la"
+  description={description}
+  image="/og/visitar.png"
+  imageAlt="Un cavall de mar agafat a una fulla d’herbei"
+  crumbs={[{ name: 'Visitar-la', href: '/visitar' }]}
+>
+  <header class="art-head page">
+    <p class="label">A la pràctica</p>
+    <h1>Mirar sense agafar res</h1>
+    <p class="art-head__lede">
+      La reserva és davant mateix de la platja i és poc fonda: es pot veure amb un tub i unes
+      ulleres. El que no es pot fer és entrar-hi a pescar, ancorar-hi ni endur-se’n res.
+    </p>
+  </header>
+
+  <div class="art page">
+    <div class="prose">
+      <h2>L’Aula Aquàtica</h2>
+      <p>
+        L’Ajuntament del Vendrell organitza l’<strong>Aula Aquàtica de la Masia Blanca</strong>,
+        activitats guiades de snorkel dins la zona protegida. És la manera recomanable de
+        conèixer-la: hi ha una explicació prèvia de l’ecosistema i de les normes, i s’entra a
+        l’aigua acompanyat. Les sortides surten de la zona del port de Coma-ruga.
+      </p>
+      <p>
+        Els calendaris, els preus i les reserves canvien cada temporada, de manera que aquí no
+        s’hi publiquen: consulteu-ho a
+        <a href={sourceByKey('elvendrell').url} rel="external">El Vendrell Turisme</a>.
+      </p>
+
+      <h2>Pel vostre compte</h2>
+      <p>
+        Des de la platja del Francàs i de Coma-ruga es pot nedar cap enfora i arribar a la part
+        somera del grapissar. Recordeu que sou en una reserva marina i que hi ha trànsit
+        d’embarcacions: porteu una boia de senyalització i no us allunyeu sols.
+      </p>
+      <p>
+        La visibilitat d’aquesta costa és variable i sovint modesta. Els millors dies són els de
+        mar plana després d’uns quants dies sense vent de garbí ni pluges. Al matí ben d’hora la
+        llum entra més rasant i els peixos encara no s’han dispersat.
+      </p>
+    </div>
+
+    <div class="rules">
+      <section class="rule-card rule-card--no">
+        <h3>Què no s’hi pot fer</h3>
+        <ul>
+          <li>Pescar-hi, de cap manera i amb cap art, si no és la pesca professional autoritzada expressament a la corona d’amortiment.</li>
+          <li>Pesca submarina.</li>
+          <li>Ancorar-hi. L’àncora arrenca la posidònia, que triga dècades a refer-se.</li>
+          <li>Agafar res: ni peixos, ni mol·luscs, ni garotes, ni pedres, ni «una branqueta».</li>
+          <li>Entrar a la reserva integral central, reservada a la investigació.</li>
+          <li>Tocar o remoure els animals. Els cavalls de mar i les escórpores no fugen: aguanten, i s’estressen.</li>
+        </ul>
+      </section>
+
+      <section class="rule-card rule-card--si">
+        <h3>Què sí</h3>
+        <ul>
+          <li>Nedar-hi i fer-hi snorkel.</li>
+          <li>Fer-hi fotografies, sense flaix directe dins les cavitats.</li>
+          <li>Bussejar-hi amb ampolla dins les zones i les condicions autoritzades.</li>
+          <li>Apuntar el que hi veieu. Les observacions ciutadanes són útils, sobretot en un espai amb un seguiment científic tan intermitent.</li>
+          <li>Preguntar als guardapesques: la caseta d’informació i vigilància és al passeig marítim, a Cala Berenguer.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="prose">
+      <h2>Dues advertències serioses</h2>
+      <p>
+        <a href="/peixos/aranya">L’aranya de cap negre</a> viu enterrada a la sorra de la vora de
+        la platja i té espines verinoses a l’aleta dorsal negra. Gairebé totes les picades es
+        produeixen trepitjant-la. La manera d’evitar-ho és entrar a l’aigua arrossegant els peus
+        en comptes de fer passes. Si us pica, aigua tan calenta com pugueu suportar: la toxina es
+        destrueix amb la calor.
+      </p>
+      <p>
+        La mateixa regla val per a les <a href="/peixos/escorpora-fosca">escórpores</a> i per a la
+        <a href="/peixos/vaca-tremolosa">vaca tremolosa</a>, que descarrega electricitat: no
+        recolzeu mai la mà en una roca o en la sorra sense haver-la mirat.
+      </p>
+
+      <h2>On és</h2>
+      <p>
+        El centre de la reserva integral és a {CENTRE.latDMS} {CENTRE.lonDMS}, davant de les
+        platges de Coma-ruga i el Francàs, al terme municipal del Vendrell (Baix Penedès). El
+        cercle protegit té {FACTS.radiTotal} milles nàutiques de radi i els fons no passen dels
+        {' '}{FACTS.fondariaMax} metres.
+      </p>
+      <p>
+        <a
+          href={`https://www.openstreetmap.org/?mlat=${CENTRE.lat}&mlon=${CENTRE.lon}#map=14/${CENTRE.lat}/${CENTRE.lon}`}
+          rel="external"
+        >
+          Veure-ho a OpenStreetMap →
+        </a>
+      </p>
+    </div>
+
+    <aside class="callout">
+      <h2>Aquest lloc no és oficial</h2>
+      <p>
+        Les normes vigents són les de l’ordre publicada al BOE i les instruccions del servei de
+        la reserva marina, que depèn de la Secretaria General de Pesca. Abans de fer-hi cap
+        activitat, comproveu-ho a la
+        <a href={sourceByKey('mapa-web').url} rel="external">pàgina oficial de la reserva</a>.
+      </p>
+    </aside>
+  </div>
+</Base>

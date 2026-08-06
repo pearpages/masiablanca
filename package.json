@@ -1,0 +1,22 @@
+{
+  "name": "masiablanca",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lloc web divulgatiu de la reserva marina de la Masia Blanca (el Grapissar), el Vendrell",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "species": "node scripts/build-species.mjs",
+    "og": "node scripts/build-og.mjs",
+    "fonts": "node scripts/fetch-fonts.mjs",
+    "check": "astro build && node scripts/check-build.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.6.0",
+    "astro": "^5.16.0",
+    "sharp": "^0.34.4"
+  }
+}

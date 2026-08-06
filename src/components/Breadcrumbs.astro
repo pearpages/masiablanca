@@ -1,0 +1,52 @@
+---
+const { crumbs = [] } = Astro.props;
+const trail = crumbs.slice(0, -1);
+const current = crumbs.at(-1);
+---
+
+<nav class="crumbs page" aria-label="Ruta de navegació">
+  <ol>
+    <li><a href="/">Inici</a></li>
+    {trail.map((c) => (<li><a href={c.href}>{c.name}</a></li>))}
+    <li aria-current="page">{current?.name}</li>
+  </ol>
+</nav>
+
+<style>
+  .crumbs {
+    padding-block-start: var(--sp-s);
+  }
+
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--sp-2xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .crumbs li + li::before {
+    content: '/';
+    margin-inline-end: var(--sp-2xs);
+    color: var(--rule-strong);
+  }
+
+  .crumbs a {
+    color: inherit;
+    text-decoration-color: var(--rule-strong);
+  }
+
+  .crumbs a:hover {
+    color: var(--accent);
+  }
+
+  .crumbs [aria-current='page'] {
+    color: var(--text);
+  }
+</style>

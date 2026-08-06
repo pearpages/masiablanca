@@ -1,0 +1,207 @@
+---
+import Base from '../layouts/Base.astro';
+import ReefSection from '../components/ReefSection.astro';
+import SpeciesCard from '../components/SpeciesCard.astro';
+import { SITE, FACTS, CENTRE, HABITATS } from '../lib/site.js';
+import { ALL, GROUPED, WITH_IUCN } from '../lib/species.js';
+import '../styles/home.css';
+
+const destacades = [
+  'anfos',
+  'corball-de-roca',
+  'cavall-de-mar',
+  'sonso',
+  'orada',
+  'vaca-tremolosa',
+]
+  .map((slug) => ALL.find((s) => s.slug === slug))
+  .filter(Boolean);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Place',
+  name: SITE.longName,
+  alternateName: 'El grapissar de la Masia Blanca',
+  description: SITE.description,
+  url: SITE.url,
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: CENTRE.lat,
+    longitude: CENTRE.lon,
+  },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Coma-ruga, el Vendrell',
+    addressRegion: 'Tarragona',
+    addressCountry: 'ES',
+  },
+  additionalType: 'https://www.wikidata.org/wiki/Q4816584',
+  isAccessibleForFree: true,
+  publicAccess: false,
+};
+---
+
+<Base
+  title={SITE.longName}
+  description={SITE.description}
+  jsonLd={jsonLd}
+>
+  <section class="hero submerged">
+    <div class="hero__grid page">
+      <div class="hero__text">
+        <p class="hero__eyebrow label">Reserva marina d’interès pesquer · des del 1999</p>
+        <h1 class="hero__title">
+          Hi ha un bosc de pedra<br />davant de&nbsp;Coma-ruga
+        </h1>
+        <p class="hero__lede">
+          A tres-cents metres de la platja del Francàs, sota una aigua que gairebé mai no és
+          transparent, el fons de sorra s’aixeca de cop en una sèrie de barres de roca. Els
+          pescadors del Vendrell en diuen <strong>el grapissar</strong>. No és roca de la costa
+          enfonsada: la van construir les algues, capa sobre capa, durant milers d’anys.
+        </p>
+        <p class="hero__actions">
+          <a class="btn" href="/peixos">Veure els {ALL.length} peixos</a>
+          <a class="btn btn--ghost" href="/el-grapissar">Què és un grapissar</a>
+        </p>
+      </div>
+
+      <dl class="hero__facts">
+        <div>
+          <dt class="label">Superfície</dt>
+          <dd class="data">{FACTS.superficie} ha</dd>
+        </div>
+        <div>
+          <dt class="label">Fondària màxima</dt>
+          <dd class="data">{FACTS.fondariaMax} m</dd>
+        </div>
+        <div>
+          <dt class="label">Barres rocoses</dt>
+          <dd class="data">{FACTS.barresMin}–{FACTS.barresMax} m</dd>
+        </div>
+        <div>
+          <dt class="label">Reserva integral</dt>
+          <dd class="data">0,2 mn</dd>
+        </div>
+        <div>
+          <dt class="label">Centre</dt>
+          <dd class="data data--sm">{CENTRE.latDMS}<br />{CENTRE.lonDMS}</dd>
+        </div>
+        <div>
+          <dt class="label">Declarada</dt>
+          <dd class="data">{FACTS.declarada}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="hero__section">
+      <ReefSection variant="perfil" />
+    </div>
+  </section>
+
+  <section class="section page">
+    <div class="intro prose">
+      <h2>Un accident geològic que és, de fet, un ésser viu</h2>
+      <p>
+        La costa del Baix Penedès és sorra i fang de cap a cap. És una costa baixa, alimentada
+        pels sediments que hi aboquen les rieres, i això vol dir que gairebé no hi ha roca on
+        una comunitat marina complexa es pugui agafar. Davant del Vendrell, però, hi ha una
+        excepció: un conjunt de barres rocoses orientades perpendicularment a la línia de costa,
+        entre els quatre i els onze metres de fondària.
+      </p>
+      <p>
+        La documentació oficial de la reserva ho descriu sense èmfasi i amb una precisió que val
+        la pena llegir dues vegades: aquestes roques són <strong>d’origen biogènic</strong>, i en
+        la seva formació hi tenen una importància especial les algues coral·linàcies, com ara
+        <i lang="la">Mesophyllum alternans</i>, que hi creixen formant un relleu molt rugós ple
+        de cavitats.
+      </p>
+      <p>
+        Dit d’una altra manera: el substrat no és el suport de la vida, és el seu producte. El
+        grapissar és una construcció, i les constructores són unes algues incrustants de color
+        rosa violaci que dipositen carbonat de calci. Cada forat d’aquesta massa porosa és el
+        refugi d’alguna cosa.
+      </p>
+    </div>
+  </section>
+
+  <section class="section--tight page">
+    <h2 class="habitats__title">Cinc ambients en cinquanta metres</h2>
+    <p class="habitats__lede prose">
+      Neda mar endins des de la platja del Francàs i els travessaràs tots. El catàleg de peixos
+      d’aquest lloc està organitzat exactament en aquest ordre.
+    </p>
+    <ol class="habitats">
+      {
+        HABITATS.map((h) => {
+          const n = GROUPED.find((g) => g.id === h.id)?.species.length ?? 0;
+          return (
+            <li class="habitat" style={`--key:${h.color}`}>
+              <a href={`/peixos#${h.id}`}>
+                <span class="habitat__depth data">{h.profunditat}</span>
+                <h3 class="habitat__nom">{h.nom}</h3>
+                <p class="habitat__resum">{h.resum}</p>
+                <span class="habitat__count label">{n} espècies</span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ol>
+  </section>
+
+  <section class="section submerged">
+    <div class="page">
+      <h2 class="picks__title">Sis raons per mirar-s’ho de prop</h2>
+      <div class="picks">
+        {destacades.map((s, i) => <SpeciesCard species={s} eager={i < 2} />)}
+      </div>
+      <p class="picks__more">
+        <a class="btn btn--ghost" href="/peixos">El catàleg sencer, {ALL.length} espècies</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section page">
+    <div class="closing">
+      <div class="prose">
+        <h2>Per què val la pena protegir-ho</h2>
+        <p>
+          Una reserva marina no fabrica peixos. El que fa és molt més simple: deixa que els que
+          hi ha es facin grans. I un peix gros no és un peix petit amb més quilos — és un animal
+          que pon exponencialment més ous. Una orada de cinc quilos no en pon el doble que una de
+          dos i mig; en pon moltes vegades més. Aquesta és tota la matemàtica de la conservació
+          pesquera, i és per això que la Confraria de Pescadors de Calafell va ser una de les
+          impulsores de la protecció.
+        </p>
+        <p>
+          Dins d’aquest catàleg hi ha {WITH_IUCN.length} espècies que la Llista Vermella de la
+          UICN considera amenaçades o gairebé amenaçades. Cap d’elles no ho és per casualitat:
+          totes creixen a poc a poc, viuen molts anys i es reprodueixen tard. Són exactament les
+          que necessiten un lloc on ningú no les molesti.
+        </p>
+        <p>
+          <a href="/historia">Com es va arribar a protegir el 1999</a> ·
+          <a href="/visitar">Com es pot visitar avui</a>
+        </p>
+      </div>
+
+      <aside class="amenaçades">
+        <h3 class="label">Espècies amenaçades del catàleg</h3>
+        <ul>
+          {
+            WITH_IUCN.map((s) => (
+              <li>
+                <a href={s.url}>{s.nom}</a>
+                <span class="data" title={s.iucnInfo.nom}>{s.iucnInfo.curt}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="amenaçades__nota">
+          Categoria global de la Llista Vermella de la UICN. Al Mediterrani, diverses d’aquestes
+          espècies tenen una avaluació regional encara més desfavorable.
+        </p>
+      </aside>
+    </div>
+  </section>
+</Base>

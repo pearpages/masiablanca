@@ -1,0 +1,207 @@
+---
+import Base from '../../layouts/Base.astro';
+import Figure from '../../components/Figure.astro';
+import DepthBand from '../../components/DepthBand.astro';
+import SpeciesCard from '../../components/SpeciesCard.astro';
+import { SITE, FACTS } from '../../lib/site.js';
+import { ALL, neighbours } from '../../lib/species.js';
+import '../../styles/species.css';
+
+export function getStaticPaths() {
+  return ALL.map((s) => ({ params: { slug: s.slug }, props: { s } }));
+}
+
+const { s } = Astro.props;
+const veins = neighbours(s.slug);
+
+const description =
+  `${s.nom} (${s.cientific}): ${s.resum} Fitxa il·lustrada de la reserva marina de la Masia ` +
+  `Blanca, a Coma-ruga. Hàbitat, fondària (${s.profunditatText}), mida i on trobar-lo al grapissar.`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: `${s.nom} (${s.cientific})`,
+  description,
+  inLanguage: 'ca',
+  isPartOf: { '@type': 'WebSite', name: SITE.longName, url: SITE.url },
+  image: s.lead ? new URL(`/og/${s.slug}.png`, SITE.url).href : undefined,
+  about: {
+    '@type': 'Taxon',
+    name: s.cientific,
+    alternateName: [s.nom, ...s.wiki.nomsPopulars],
+    taxonRank: 'species',
+    parentTaxon: { '@type': 'Taxon', name: s.familia, taxonRank: 'family' },
+    sameAs: [s.wiki.url, s.commonsCategoryUrl].filter(Boolean),
+  },
+};
+---
+
+<Base
+  title={`${s.nom} · ${s.cientific}`}
+  description={description}
+  image={`/og/${s.slug}.png`}
+  imageAlt={s.altText}
+  type="article"
+  crumbs={[
+    { name: 'Els peixos', href: '/peixos' },
+    { name: s.nom, href: s.url },
+  ]}
+  jsonLd={jsonLd}
+>
+  <article class="sp">
+    <header class="sp__head page">
+      <p class="label sp__group">
+        <a href={`/peixos#${s.habitat}`} style={`--key:${s.habitatInfo.color}`}>
+          {s.habitatInfo.nom}
+        </a>
+      </p>
+      <h1>{s.nom}</h1>
+      <p class="sp__sci">
+        <i lang="la">{s.cientific}</i>
+        {s.autoria && <span class="sp__aut data">{s.autoria}</span>}
+      </p>
+      {
+        s.wiki.nomsPopulars.length > 0 && (
+          <p class="sp__alies">
+            També <span>{s.wiki.nomsPopulars.join(', ')}</span>
+          </p>
+        )
+      }
+    </header>
+
+    <div class="sp__body page">
+      <div class="sp__main">
+        {
+          s.lead ? (
+            <Figure
+              image={s.lead}
+              alt={s.altText}
+              priority
+              sizes="(min-width: 64rem) 40rem, 94vw"
+              widths={[540, 800, 1200, 1600]}
+            />
+          ) : (
+            <p class="sp__noimg label">
+              Encara no hi ha cap fotografia lliure d’aquesta espècie a Wikimedia Commons que
+              compleixi els criteris d’aquest lloc.
+            </p>
+          )
+        }
+
+        <div class="prose sp__prose">
+          <p class="sp__resum">{s.resum}</p>
+          {s.text.map((p) => <p>{p}</p>)}
+
+          <h2>On trobar-lo al grapissar</h2>
+          <p>{s.onTrobar}</p>
+        </div>
+
+        {
+          s.galeria.length > 0 && (
+            <section class="sp__galeria">
+              <h2 class="label">Més imatges</h2>
+              <div class="sp__galeria-grid">
+                {s.galeria.map((img) => (
+                  <Figure
+                    image={img}
+                    alt={`${s.nom} (${s.cientific})`}
+                    sizes="(min-width: 48rem) 18rem, 44vw"
+                    widths={[280, 420, 640]}
+                  />
+                ))}
+              </div>
+            </section>
+          )
+        }
+      </div>
+
+      <aside class="sp__aside">
+        <div class="fitxa">
+          <h2 class="label fitxa__title">Fitxa</h2>
+          <dl>
+            <div>
+              <dt>Família</dt>
+              <dd><i lang="la">{s.familia}</i></dd>
+            </div>
+            <div>
+              <dt>Mida</dt>
+              <dd>{s.mida}</dd>
+            </div>
+            <div>
+              <dt>Ambient</dt>
+              <dd>{s.habitatInfo.nom}</dd>
+            </div>
+            {
+              s.iucnInfo && (
+                <div>
+                  <dt>Llista Vermella UICN</dt>
+                  <dd>
+                    <span class={`iucn iucn--${s.iucn.toLowerCase()}`}>{s.iucnInfo.curt}</span>
+                    {' '}{s.iucnInfo.nom}
+                  </dd>
+                </div>
+              )
+            }
+          </dl>
+
+          <div class="fitxa__depth">
+            <p class="label">Fondària dins la reserva</p>
+            <p class="fitxa__range data">{s.profunditatText}</p>
+            <DepthBand
+              from={s.profunditat[0]}
+              to={s.profunditat[1]}
+              colour={s.habitatInfo.color}
+            />
+            <p class="fitxa__legend">
+              La trama marca les barres rocoses del grapissar, entre {FACTS.barresMin} i
+              {' '}{FACTS.barresMax} m. La reserva arriba als {FACTS.fondariaMax} m.
+            </p>
+          </div>
+
+          <nav class="fitxa__links" aria-label="Enllaços externs">
+            <p class="label">Saber-ne més</p>
+            <ul>
+              {
+                s.wiki.url && (
+                  <li>
+                    <a href={s.wiki.url} rel="external" hreflang={s.wiki.lang}>
+                      {s.wiki.lang === 'ca' ? 'Viquipèdia' : `Wikipedia (${s.wiki.lang})`}
+                      <span class="data"> · {s.wiki.title}</span>
+                    </a>
+                  </li>
+                )
+              }
+              <li>
+                <a href={s.commonsCategoryUrl} rel="external">
+                  Wikimedia Commons<span class="data"> · imatges</span>
+                </a>
+              </li>
+              <li>
+                <a href={s.wormsUrl} rel="external">
+                  WoRMS<span class="data"> · taxonomia</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+    </div>
+
+    {
+      veins.length > 0 && (
+        <section class="sp__veins page">
+          <h2 class="label">Al mateix ambient</h2>
+          <div class="sp__veins-grid">
+            {veins.map((v) => (
+              <SpeciesCard species={v} />
+            ))}
+          </div>
+          <p class="sp__tornar">
+            <a href="/peixos">← Tot el catàleg</a>
+          </p>
+        </section>
+      )
+    }
+  </article>
+</Base>

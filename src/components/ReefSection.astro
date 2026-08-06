@@ -1,0 +1,287 @@
+---
+/**
+ * Cross-section of the reserve, drawn to scale on the vertical axis.
+ *
+ *   variant="perfil"  — profile running offshore from the beach at el Francàs
+ *                       out to the 25 m limit: sand slope, the grapissar rising
+ *                       out of it between 4 and 11 m, then meadow and sand.
+ *   variant="barres"  — a section cut ACROSS the bars (which run perpendicular
+ *                       to the coast), showing the ridge-and-groove relief the
+ *                       coralline algae build.
+ *
+ * The pink is not a decorative accent: it is the colour of Mesophyllum, the
+ * alga that deposits the rock. Sand is sand. Depths are accurate; horizontal
+ * distance is compressed.
+ */
+const { variant = 'perfil' } = Astro.props;
+
+const W = 1400;
+const H = 384;
+const TOP = 38; // y of the sea surface
+const FLOOR = 26; // metres at the bottom edge of the drawing
+const y = (m) => TOP + (m / FLOOR) * (H - TOP - 14);
+
+const ticks = [5, 10, 15, 20, 25];
+const SHORE = 132; // x where the waterline meets the beach
+
+/** Sand bed, offshore profile. */
+const bedPts = [
+  [SHORE, 0],
+  [210, 2.1],
+  [280, 3.9],
+  [380, 5.4],
+  [490, 6.6],
+  [600, 7.8],
+  [690, 9.2],
+  [800, 12.4],
+  [920, 15.6],
+  [1040, 18.8],
+  [1170, 21.6],
+  [1300, 23.6],
+  [W, 24.6],
+];
+const bed = `M${SHORE},${y(0)} ${bedPts.map(([x, d]) => `L${x},${y(d)}`).join(' ')} L${W},${H} L${SHORE},${H} Z`;
+
+/** Interpolated bed depth, so the bars can sit exactly on it. */
+function bedDepth(x) {
+  for (let i = 1; i < bedPts.length; i++) {
+    const [x0, d0] = bedPts[i - 1];
+    const [x1, d1] = bedPts[i];
+    if (x <= x1) return d0 + ((d1 - d0) * (x - x0)) / (x1 - x0);
+  }
+  return bedPts.at(-1)[1];
+}
+
+/**
+ * The bars themselves: crests between 4 and 11 m, RESTING ON the sand rather
+ * than replacing it — so the return leg of the path traces the bed backwards.
+ */
+const BAR_FROM = 268;
+const BAR_TO = 760;
+const crestDepths = [4.6, 4.1, 5.2, 4.4, 5.6, 4.9, 6.2, 5.4, 6.8, 7.4];
+const barW = (BAR_TO - BAR_FROM) / crestDepths.length;
+
+const crests = crestDepths
+  .map((crest, i) => {
+    const x0 = BAR_FROM + i * barW;
+    const mid = x0 + barW * 0.5;
+    const x1 = x0 + barW;
+    // Rough, cavity-ridden crests rather than clean triangles.
+    return (
+      `L${x0 + barW * 0.14},${y(crest + 1.6)} L${x0 + barW * 0.28},${y(crest + 0.4)} ` +
+      `L${mid - barW * 0.06},${y(crest)} L${mid + barW * 0.1},${y(crest + 0.55)} ` +
+      `L${x1 - barW * 0.2},${y(crest + 0.15)} L${x1 - barW * 0.06},${y(bedDepth(x1) - 0.5)} ` +
+      `L${x1},${y(bedDepth(x1))} `
+    );
+  })
+  .join('');
+
+/** Bed line walked backwards, to close the rock shape onto the sand. */
+const backAlongBed = [...bedPts]
+  .reverse()
+  .filter(([x]) => x > BAR_FROM && x < BAR_TO)
+  .map(([x, d]) => `L${x},${y(d)}`)
+  .join(' ');
+
+const bars = `M${BAR_FROM},${y(bedDepth(BAR_FROM))} ${crests} ${backAlongBed} Z`;
+
+/** Section across the bars: pure corrugation on a flat sand floor. */
+const FLAT = 11.3;
+const acrossCrests = [5.1, 4.3, 6.0, 4.6, 5.5, 4.2, 6.4, 5.0];
+const acrossW = W / acrossCrests.length;
+const across =
+  `M0,${y(FLAT)} ` +
+  acrossCrests
+    .map((crest, i) => {
+      const x0 = i * acrossW;
+      const mid = x0 + acrossW * 0.5;
+      return (
+        `L${x0 + acrossW * 0.14},${y(crest + 2.2)} L${x0 + acrossW * 0.26},${y(crest + 0.6)} ` +
+        `L${mid - acrossW * 0.08},${y(crest)} L${mid + acrossW * 0.09},${y(crest + 0.7)} ` +
+        `L${x0 + acrossW * 0.74},${y(crest + 0.2)} L${x0 + acrossW * 0.88},${y(FLAT - 0.8)} ` +
+        `L${x0 + acrossW},${y(FLAT)} `
+      );
+    })
+    .join('') +
+  `L${W},${H} L0,${H} Z`;
+
+const isPerfil = variant === 'perfil';
+const title = isPerfil
+  ? 'Perfil del fons des de la platja del Francàs fins al límit de 25 metres de la reserva: pendent de sorra, les barres del grapissar entre 4 i 11 metres, i praderia de posidònia mar endins.'
+  : 'Secció transversal de les barres del grapissar: crestes de roca construïda per algues coral·linàcies entre 4 i 6 metres, separades per solcs de sorra a 11 metres.';
+
+const uid = variant;
+---
+
+<figure class="reef">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby={`reef-t-${uid}`}>
+    <title id={`reef-t-${uid}`}>{title}</title>
+
+    <defs>
+      <linearGradient id={`water-${uid}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3a7d75" />
+        <stop offset="40%" stop-color="#1f4a4a" />
+        <stop offset="100%" stop-color="#08151b" />
+      </linearGradient>
+      <linearGradient id={`sand-${uid}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#cbbb99" />
+        <stop offset="60%" stop-color="#8a7a5c" />
+        <stop offset="100%" stop-color="#3d3629" />
+      </linearGradient>
+      <linearGradient id={`rock-${uid}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e0a0b4" />
+        <stop offset="30%" stop-color="#c4738c" />
+        <stop offset="100%" stop-color="#5d2b3c" />
+      </linearGradient>
+    </defs>
+
+    <rect x="0" y={TOP} width={W} height={H - TOP} fill={`url(#water-${uid})`} />
+
+    {ticks.map((m) => <line x1="0" x2={W} y1={y(m)} y2={y(m)} class="reef__grid" />)}
+
+    <path
+      class="reef__surface"
+      d={`M0,${TOP} ${Array.from({ length: 48 }, (_, i) => `Q${i * 25 + 12},${TOP + (i % 2 ? 4 : -4)} ${i * 25 + 25},${TOP}`).join(' ')}`}
+    />
+
+    {
+      isPerfil ? (
+        <>
+          {/* dry beach */}
+          <path class="reef__beach" d={`M0,${TOP - 26} L${SHORE},${y(0)} L${SHORE},${H} L0,${H} Z`} />
+          <path class="reef__bed" d={bed} fill={`url(#sand-${uid})`} />
+
+          {/* posidonia, seaward of the bars */}
+          <g class="reef__meadow">
+            {Array.from({ length: 30 }, (_, i) => {
+              const x = 790 + i * 11.6;
+              const d = bedDepth(x);
+              const h = 15 + ((i * 7) % 12);
+              return <path d={`M${x},${y(d)} q${i % 2 ? 5 : -5},${-h * 0.55} ${i % 2 ? 2 : -2},${-h}`} />;
+            })}
+          </g>
+          <g class="reef__meadow">
+            {Array.from({ length: 10 }, (_, i) => {
+              const x = 196 + i * 7;
+              return <path d={`M${x},${y(bedDepth(x))} q${i % 2 ? 4 : -4},-7 ${i % 2 ? 1 : -1},-12`} />;
+            })}
+          </g>
+
+          <path class="reef__rock" d={bars} fill={`url(#rock-${uid})`} />
+
+          <g class="reef__labels">
+            <text x="30" y={TOP - 10}>el Francàs</text>
+            <text x={BAR_FROM + 6} y={y(3.1)}>el grapissar</text>
+            <text x="820" y={y(11.6)}>praderia de posidònia</text>
+            <text x="1140" y={y(20.6)}>sorra i fang</text>
+          </g>
+        </>
+      ) : (
+        <>
+          <path class="reef__rock" d={across} fill={`url(#rock-${uid})`} />
+          <g class="reef__labels">
+            <text x="30" y={y(3.0)}>crestes de roca coral·lígena</text>
+            <text x="30" y={y(FLAT + 2.1)}>solcs de sorra</text>
+          </g>
+        </>
+      )
+    }
+
+    <g class="reef__depths">
+      {ticks.map((m) => (
+        <text x={W - 14} y={y(m) - 6} text-anchor="end">{m} m</text>
+      ))}
+    </g>
+  </svg>
+
+  <figcaption class="label page">
+    {
+      isPerfil
+        ? 'Perfil del fons, de la platja al límit de la reserva. Escala vertical real; distància horitzontal comprimida.'
+        : 'Secció a través de les barres. Les crestes són roca biogènica; els solcs, sorra. Escala vertical real.'
+    }
+  </figcaption>
+</figure>
+
+<style>
+  .reef {
+    margin: 0;
+  }
+
+  .reef svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .reef__grid {
+    stroke: #f7f4ee;
+    stroke-width: 1;
+    stroke-dasharray: 2 9;
+    opacity: 0.22;
+  }
+
+  .reef__surface {
+    fill: none;
+    stroke: #e4dccb;
+    stroke-width: 2.5;
+    opacity: 0.9;
+  }
+
+  .reef__beach {
+    fill: #cbbb99;
+  }
+
+  .reef__bed,
+  .reef__rock {
+    stroke: #f7f4ee;
+    stroke-width: 1;
+    stroke-opacity: 0.35;
+    stroke-linejoin: round;
+  }
+
+  .reef__rock {
+    stroke: #e9a5b6;
+    stroke-opacity: 0.7;
+  }
+
+  .reef__meadow path {
+    fill: none;
+    stroke: #7d8a44;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+
+  .reef__labels text {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    fill: #f7f4ee;
+    paint-order: stroke;
+    stroke: #08151b;
+    stroke-width: 3.5px;
+    stroke-linejoin: round;
+  }
+
+  .reef__depths text {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    fill: #f7f4ee;
+    fill-opacity: 0.55;
+  }
+
+  .reef figcaption {
+    margin-block-start: var(--sp-2xs);
+  }
+
+  @media (width < 40rem) {
+    .reef__labels text {
+      font-size: 22px;
+    }
+
+    .reef__depths text {
+      font-size: 19px;
+    }
+  }
+</style>

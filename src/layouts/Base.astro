@@ -1,0 +1,109 @@
+---
+import '../styles/global.css';
+import Seo from '../components/Seo.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import DepthRuler from '../components/DepthRuler.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../lib/site.js';
+
+const {
+  title,
+  description,
+  image,
+  imageAlt,
+  type,
+  jsonLd = [],
+  crumbs = [],
+  noindex = false,
+} = Astro.props;
+
+const crumbLd =
+  crumbs.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [{ name: 'Inici', href: '/' }, ...crumbs].map((c, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: c.name,
+          item: new URL(c.href, SITE.url).href,
+        })),
+      }
+    : null;
+---
+
+<!doctype html>
+<html lang="ca">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0b1b22" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <link rel="preconnect" href="/" />
+    <link
+      rel="preload"
+      href="/fonts/bricolage-grotesque-latin-normal-1.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/newsreader-latin-normal-9.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+
+    <Seo
+      title={title}
+      description={description}
+      image={image}
+      imageAlt={imageAlt}
+      type={type}
+      jsonLd={[...(Array.isArray(jsonLd) ? jsonLd : [jsonLd]), crumbLd]}
+      noindex={noindex}
+    />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#contingut">Vés al contingut</a>
+    <DepthRuler />
+    <SiteHeader />
+
+    <main id="contingut">
+      {crumbs.length > 0 && <Breadcrumbs crumbs={crumbs} />}
+      <slot />
+    </main>
+
+    <SiteFooter />
+
+    <style is:global>
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Give the fixed depth ruler its own gutter once it appears. */
+      @media (width >= 68rem) {
+        .masthead__inner,
+        main > .page,
+        main .page,
+        .colophon__inner {
+          margin-inline-start: max(
+            var(--ruler-w),
+            calc((100vw - var(--page-max)) / 2)
+          );
+          margin-inline-end: auto;
+        }
+      }
+    </style>
+  </body>
+</html>

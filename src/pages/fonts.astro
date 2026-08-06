@@ -1,0 +1,164 @@
+---
+import Base from '../layouts/Base.astro';
+import { SOURCES, FACTS } from '../lib/site.js';
+import { ALL } from '../lib/species.js';
+import '../styles/article.css';
+import '../styles/fonts-page.css';
+
+const description =
+  'Totes les fonts utilitzades per escriure aquest lloc: les ordres del BOE, la documentació ' +
+  'del Ministeri, la Viquipèdia, la premsa i les bases de dades taxonòmiques, amb nota sobre ' +
+  'les discrepàncies entre elles.';
+
+const TIPUS = ['Norma', 'Document oficial', 'Web oficial', 'Web institucional', 'Premsa', 'Enciclopèdia', 'Base de dades', 'Repositori d’imatges', 'Divulgació'];
+const grups = TIPUS.map((t) => ({ tipus: t, items: SOURCES.filter((s) => s.tipus === t) })).filter(
+  (g) => g.items.length > 0,
+);
+
+/** Species the official documentation names explicitly. */
+const CITADES = [
+  { slug: 'orada', on: 'Fitxa i web del Ministeri; Viquipèdia' },
+  { slug: 'moll-de-roca', on: 'Fitxa i web del Ministeri; Viquipèdia' },
+  { slug: 'moll-de-fang', on: 'Fitxa del Ministeri («salmonete»)' },
+  { slug: 'anfos', on: 'Web del Ministeri («mero»); Viquipèdia' },
+  { slug: 'llobarro', on: 'Fitxa del Ministeri («lubina»); Viquipèdia' },
+  { slug: 'congre', on: 'Web del Ministeri («congrio»)' },
+  { slug: 'sarg', on: 'Web del Ministeri («sargo»)' },
+  { slug: 'vaca-serrana', on: 'Web del Ministeri («serranos»)' },
+  { slug: 'escorpora-fosca', on: 'Web del Ministeri («escorpénidos»)' },
+  { slug: 'agulla', on: 'Web del Ministeri («agujas»)' },
+  { slug: 'sardina', on: 'Web del Ministeri («sardina»)' },
+]
+  .map((c) => ({ ...c, s: ALL.find((x) => x.slug === c.slug) }))
+  .filter((c) => c.s);
+---
+
+<Base
+  title="Fonts i referències"
+  description={description}
+  crumbs={[{ name: 'Fonts', href: '/fonts' }]}
+>
+  <header class="art-head page">
+    <p class="label">Bibliografia</p>
+    <h1>D’on surt tot això</h1>
+    <p class="art-head__lede">
+      Aquest lloc és divulgatiu i independent. Els textos són originals, però les dades no se les
+      inventa ningú: aquí hi ha totes les fonts consultades, i també allò en què no coincideixen.
+    </p>
+  </header>
+
+  <div class="art page">
+    {
+      grups.map((g) => (
+        <section class="srcgroup">
+          <h2 class="label srcgroup__title">{g.tipus}</h2>
+          <ul class="srclist">
+            {g.items.map((s) => (
+              <li class="src">
+                <h3 class="src__titol">
+                  <a href={s.url} rel="external">{s.titol}</a>
+                </h3>
+                <p class="src__editor data">{s.editor}</p>
+                {s.nota && <p class="src__nota">{s.nota}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+
+    <section class="discrep">
+      <h2>On les fonts no coincideixen</h2>
+      <p class="discrep__lede">
+        Aquest lloc pren com a referència les xifres oficials del Ministeri i de l’ordre
+        publicada al BOE, però les altres també són publicades i val més deixar-ne constància
+        que triar-ne una en silenci.
+      </p>
+      <div class="scroll-x">
+        <table class="discrep__table">
+          <thead>
+            <tr>
+              <th scope="col">Dada</th>
+              <th scope="col">Aquest lloc</th>
+              <th scope="col">Altres valors publicats</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Superfície</td>
+              <td class="data">{FACTS.superficie} ha</td>
+              <td>449 ha «en aigües exteriors» (fullet del Ministeri) · 278 ha de roca (VilaWeb, 2000)</td>
+            </tr>
+            <tr>
+              <td>Fondària de les barres</td>
+              <td class="data">{FACTS.barresMin}–{FACTS.barresMax} m</td>
+              <td>4–14,5 m (VilaWeb, 2000) · 4–16 m (Viquipèdia)</td>
+            </tr>
+            <tr>
+              <td>Coordenades del centre</td>
+              <td class="data">41° 10′ 27″ N · 1° 30′ 40,2″ E</td>
+              <td>41° 10′ 26″ N · 1° 30′ 35″ E (Viquipèdia)</td>
+            </tr>
+            <tr>
+              <td>Any de referència</td>
+              <td class="data">1999</td>
+              <td>2000, quan es publica al BOE i quan la premsa n’informa</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="citades">
+      <h2>Espècies que les fonts oficials citen expressament</h2>
+      <p class="citades__lede">
+        La resta del catàleg s’ha construït a partir dels hàbitats documentats de la reserva
+        — barres de roca biogènica entre {FACTS.barresMin} i {FACTS.barresMax} m, herbeis de
+        posidònia i cimodocea, i fons de sorra i fang fins als {FACTS.fondariaMax} m — i de la
+        ictiofauna coneguda d’aquests hàbitats a la costa catalana. És una llista d’espècies
+        <strong> que s’hi poden trobar</strong>, no el resultat d’un cens.
+      </p>
+      <ul class="citades__list">
+        {
+          CITADES.map((c) => (
+            <li>
+              <a href={c.s.url}>{c.s.nom}</a>
+              <span class="citades__on">{c.on}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="citades__nota">
+        La documentació oficial fa servir noms castellans genèrics («serranos», «escorpénidos»,
+        «agujas») que corresponen a més d’una espècie; aquí s’han assignat a l’espècie més
+        probable per a aquests fons.
+      </p>
+    </section>
+
+    <section class="metode">
+      <h2>Mètode</h2>
+      <ul>
+        <li>
+          Els textos de les fitxes i de les pàgines són originals, escrits per a aquest lloc.
+        </li>
+        <li>
+          Els noms populars catalans de cada espècie s’han extret automàticament de l’article
+          corresponent de la Viquipèdia en català i cada fitxa hi enllaça. Text sota CC BY-SA 4.0.
+        </li>
+        <li>
+          Les fotografies s’han obtingut de Wikimedia Commons amb la seva autoria i llicència, i
+          es publiquen allotjades en aquest domini. Cap imatge no s’hi publica si no se’n pot
+          resoldre l’autor i la llicència.
+        </li>
+        <li>
+          Les fondàries que apareixen a cada fitxa són les esperables <strong>dins la reserva</strong>,
+          que no passa dels {FACTS.fondariaMax} m, no el rang global de l’espècie.
+        </li>
+        <li>
+          Les categories de la UICN són les globals de la Llista Vermella. Al Mediterrani,
+          diverses espècies del catàleg tenen una avaluació regional més desfavorable.
+        </li>
+      </ul>
+    </section>
+  </div>
+</Base>

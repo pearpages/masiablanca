@@ -1,0 +1,40 @@
+---
+import { NAV, SITE } from '../lib/site.js';
+import './SiteHeader.css';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="masthead">
+  <div class="masthead__inner page">
+    <a class="masthead__brand" href="/" aria-label={`${SITE.longName} — inici`}>
+      <span class="masthead__mark" aria-hidden="true">
+        <svg viewBox="0 0 28 28" role="presentation">
+          <path class="masthead__mark-water" d="M0 7h28" />
+          <path class="masthead__mark-reef" d="M1 24h4l2-7 2 5 2-9 2 8 2-11 2 12 2-6 2 4 2-3 3 7" />
+        </svg>
+      </span>
+      <span class="masthead__names">
+        <span class="masthead__name">La Masia Blanca</span>
+        <span class="masthead__sub label">Reserva marina · el Vendrell</span>
+      </span>
+    </a>
+
+    <nav class="masthead__nav" aria-label="Principal">
+      <ul>
+        {
+          NAV.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={path === item.href || path.startsWith(`${item.href}/`) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>

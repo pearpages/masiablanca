@@ -1,0 +1,131 @@
+---
+import Base from '../layouts/Base.astro';
+import { ALL_IMAGES, LICENCE_SUMMARY, ALL } from '../lib/species.js';
+import '../styles/article.css';
+import '../styles/credits.css';
+
+const description =
+  `Autoria i llicència de les ${ALL_IMAGES.length} fotografies publicades en aquest lloc, ` +
+  'totes procedents de Wikimedia Commons, imatge per imatge.';
+---
+
+<Base
+  title="Crèdits de les imatges"
+  description={description}
+  crumbs={[{ name: 'Crèdits', href: '/credits' }]}
+>
+  <header class="art-head page">
+    <p class="label">Atribució</p>
+    <h1>Qui ha fet aquestes fotografies</h1>
+    <p class="art-head__lede">
+      Les {ALL_IMAGES.length} imatges de peixos d’aquest lloc provenen de Wikimedia Commons i
+      s’hi publiquen sota les llicències lliures que els seus autors van triar. Aquí hi ha la
+      llista completa; cada fitxa d’espècie repeteix el crèdit sota la imatge corresponent.
+    </p>
+  </header>
+
+  <div class="art page">
+    <section class="lic-summary">
+      <h2 class="label">Llicències en ús</h2>
+      <ul>
+        {
+          LICENCE_SUMMARY.map((l) => (
+            <li>
+              {l.url ? (
+                <a href={l.url} rel="license external">{l.name}</a>
+              ) : (
+                <span>{l.name}</span>
+              )}
+              <span class="data">{l.count}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <div class="prose">
+      <h2>Què vol dir cada llicència</h2>
+      <p>
+        <strong>CC BY</strong> permet reutilitzar la imatge, també comercialment, sempre que se
+        n’atribueixi l’autoria. <strong>CC BY-SA</strong> hi afegeix una condició: qualsevol obra
+        derivada s’ha de distribuir amb la mateixa llicència. <strong>CC0</strong> és una renúncia
+        de drets, i <strong>domini públic</strong> vol dir que els drets ja han expirat o mai no
+        n’hi ha hagut.
+      </p>
+      <p>
+        En tots els casos, aquest lloc enllaça el nom de l’autor, el text de la llicència i la
+        pàgina original del fitxer a Commons. Si sou l’autor d’alguna d’aquestes imatges i
+        detecteu una atribució incorrecta, és un error i s’ha de corregir.
+      </p>
+      <p>
+        Els textos de les fitxes són originals. Els noms populars catalans de cada espècie
+        provenen dels articles corresponents de la Viquipèdia, disponibles sota
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.ca" rel="license external">
+          CC BY-SA 4.0</a>. Vegeu la <a href="/fonts">pàgina de fonts</a> per a la resta.
+      </p>
+    </div>
+
+    <section class="cred">
+      <h2 class="label cred__title">
+        Totes les imatges · {ALL_IMAGES.length} fotografies de {ALL.length} espècies
+      </h2>
+      <div class="scroll-x">
+        <table class="cred__table">
+          <thead>
+            <tr>
+              <th scope="col">Espècie</th>
+              <th scope="col">Fitxer a Commons</th>
+              <th scope="col">Autoria</th>
+              <th scope="col">Llicència</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              ALL_IMAGES.map((img) => (
+                <tr>
+                  <td>
+                    <a href={img.species.url}>{img.species.nom}</a>
+                    <span class="cred__sci"><i lang="la">{img.species.cientific}</i></span>
+                  </td>
+                  <td>
+                    <a href={img.commonsUrl} rel="external nofollow">
+                      {img.commonsFile.replace(/^File:/, '')}
+                    </a>
+                  </td>
+                  <td>
+                    {img.author ? (
+                      img.author.url ? (
+                        <a href={img.author.url} rel="external nofollow">{img.author.name}</a>
+                      ) : (
+                        img.author.name
+                      )
+                    ) : (
+                      <span class="cred__pd">Domini públic</span>
+                    )}
+                  </td>
+                  <td class="data">
+                    {img.licence.url ? (
+                      <a href={img.licence.url} rel="license external nofollow">{img.licence.name}</a>
+                    ) : (
+                      img.licence.name
+                    )}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="prose">
+      <h2>Tipografies</h2>
+      <p>
+        Bricolage Grotesque (Mathieu Triay), Newsreader (Production Type) i IBM Plex Mono (IBM),
+        totes tres sota
+        <a href="https://openfontlicense.org/" rel="license external">SIL Open Font License</a>,
+        servides des d’aquest mateix domini.
+      </p>
+    </div>
+  </div>
+</Base>

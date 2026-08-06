@@ -1,0 +1,63 @@
+---
+/**
+ * The attribution line. Author · licence · source, each linked where a link
+ * exists, which is what CC BY and CC BY-SA actually require.
+ */
+const { image, inline = false } = Astro.props;
+const { author, licence, commonsUrl } = image;
+---
+
+<span class={`credit data${inline ? ' credit--inline' : ''}`}>
+  {
+    author ? (
+      <>
+        {'© '}
+        {author.url ? (
+          <a href={author.url} rel="external nofollow">{author.name}</a>
+        ) : (
+          <span>{author.name}</span>
+        )}
+      </>
+    ) : (
+      <span>Domini públic</span>
+    )
+  }
+  <span class="credit__sep" aria-hidden="true">·</span>
+  {
+    licence.url ? (
+      <a href={licence.url} rel="license external nofollow">{licence.name}</a>
+    ) : (
+      <span>{licence.name}</span>
+    )
+  }
+  <span class="credit__sep" aria-hidden="true">·</span>
+  <a href={commonsUrl} rel="external nofollow">Wikimedia Commons</a>
+</span>
+
+<style>
+  .credit {
+    display: block;
+    font-size: 0.66rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    letter-spacing: 0.01em;
+  }
+
+  .credit--inline {
+    display: inline;
+  }
+
+  .credit a {
+    color: inherit;
+    text-decoration-color: var(--rule-strong);
+  }
+
+  .credit a:hover {
+    color: var(--accent);
+  }
+
+  .credit__sep {
+    margin-inline: 0.3em;
+    opacity: 0.6;
+  }
+</style>

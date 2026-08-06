@@ -1,0 +1,141 @@
+---
+import Base from '../layouts/Base.astro';
+import ReefSection from '../components/ReefSection.astro';
+import { FACTS, CENTRE } from '../lib/site.js';
+import { GROUPED } from '../lib/species.js';
+import '../styles/article.css';
+
+const description =
+  'Què és un grapissar: les barres de roca biogènica construïdes per algues coral·linàcies ' +
+  'davant de Coma-ruga, les praderies de posidònia i cimodocea que les envolten, i com ' +
+  's’organitza la vida entre els 4 i els 25 metres de fondària.';
+---
+
+<Base
+  title="El grapissar"
+  description={description}
+  image="/og/el-grapissar.png"
+  imageAlt="Un cap-roig damunt la roca coral·lígena"
+  crumbs={[{ name: 'El grapissar', href: '/el-grapissar' }]}
+>
+  <header class="art-head page">
+    <p class="label">El lloc</p>
+    <h1>Una roca que les algues han fet</h1>
+    <p class="art-head__lede">
+      «Grapissar» és el nom que la gent de mar del Penedès i el Camp de Tarragona dona als fons
+      durs i irregulars, plens de grava i pedra, que trenquen la monotonia de la sorra. El del
+      Vendrell és el més important de tots, i el motiu és que no és ben bé una roca.
+    </p>
+  </header>
+
+  <section class="submerged art-figure">
+    <div class="page">
+      <ReefSection variant="barres" />
+    </div>
+  </section>
+
+  <div class="art page">
+    <div class="prose">
+      <h2>Construïda, no erosionada</h2>
+      <p>
+        La major part dels fons rocosos del litoral són el resultat de la destrucció: penya-segats
+        que s’enfonsen, blocs que cauen, plataformes que l’onatge desgasta. El grapissar de la
+        Masia Blanca funciona al revés. El fullet oficial de la reserva ho diu amb claredat: la
+        major part d’aquestes roques són <strong>d’origen biogènic</strong>, i en la seva formació
+        hi tenen una importància especial les algues de la família de les coral·linàcies, com ara
+        <i lang="la">Mesophyllum alternans</i>, que hi assoleixen una mida considerable i creixen
+        formant un relleu molt rugós, amb nombroses oquedats.
+      </p>
+      <p>
+        Les coral·linàcies són algues vermelles que precipiten carbonat de calci dins de les seves
+        parets cel·lulars. Creixen incrustades, en làmines primes i quebradisses, i el resultat
+        acumulat al llarg de segles és una estructura calcària porosa d’un color rosa violaci
+        característic. Aquest és el color real del grapissar quan s’il·lumina de prop: no és gris,
+        és rosat.
+      </p>
+      <p>
+        El paral·lelisme amb un escull de corall tropical és inevitable, i és correcte en el
+        principi encara que no en l’escala: en tots dos casos, un organisme fabrica el substrat
+        tridimensional sobre el qual s’organitza tota la resta de la comunitat. Al Mediterrani
+        aquest tipus de construcció rep el nom de <strong>coral·ligen</strong>, i és l’hàbitat
+        més divers de tota la conca després de les praderies de posidònia.
+      </p>
+
+      <h2>La forma: barres i solcs</h2>
+      <p>
+        Les barres corren <strong>perpendiculars a la costa</strong> i se situen entre els
+        {FACTS.barresMin} i els {FACTS.barresMax} metres de fondària. Entre barra i barra hi ha
+        canals de sorra. Aquesta alternança és el que fa que el lloc funcioni: un peix que viu a
+        la roca té, a pocs metres, un terreny de caça completament diferent, i un peix de sorra
+        té un refugi immediat.
+      </p>
+      <p>
+        Les oquedats són la clau. Una superfície rocosa llisa allotja poca cosa; una superfície
+        plena de forats de totes les mides allotja una espècie per cada mida de forat. Per això
+        el catàleg d’aquest lloc té tantes espècies petites i críptiques — bavoses, gòbits,
+        escórpores — com peixos grossos i vistosos.
+      </p>
+
+      <h2>Les praderies</h2>
+      <p>
+        Al voltant i entre les barres hi ha herbeis de dues fanerògames marines: la posidònia
+        (<i lang="la">Posidonia oceanica</i>) i la cimodocea (<i lang="la">Cymodocea nodosa</i>).
+        No són algues, sinó plantes amb flors i fruits que van tornar al mar fa milions d’anys.
+      </p>
+      <p>
+        La posidònia creix uns pocs centímetres l’any i forma una «mata» de rizomes i sediment
+        atrapat que pot tenir mil·lennis d’antiguitat. Fa tres feines alhora: oxigena l’aigua,
+        fixa el sediment — sense ella, la sorra de la platja marxaria — i ofereix a milers
+        d’animals una estructura vertical on créixer. La cimodocea és més modesta i més ràpida, i
+        colonitza fons més remoguts.
+      </p>
+      <p>
+        Els herbeis de la reserva funcionen sobretot com a <strong>zona de cria</strong>. Els
+        juvenils d’espècies que de grans viuran a la roca o en aigua oberta hi passen els primers
+        mesos. És l’argument central per protegir un lloc com aquest, i és també el que la fitxa
+        oficial subratlla quan parla de l’orada i el moll.
+      </p>
+
+      <h2>Com es reparteix la vida</h2>
+    </div>
+
+    <ol class="zones">
+      {
+        GROUPED.map((g) => (
+          <li class="zone" style={`--key:${g.color}`}>
+            <div class="zone__bar" />
+            <div>
+              <p class="zone__depth data">{g.profunditat}</p>
+              <h3 class="zone__nom">
+                <a href={`/peixos#${g.id}`}>{g.nom}</a>
+              </h3>
+              <p class="zone__resum">{g.resum}</p>
+              <p class="zone__count label">{g.species.length} espècies al catàleg</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="prose">
+      <h2>On és, exactament</h2>
+      <p>
+        El centre de la reserva integral és al punt {CENTRE.latDMS} {CENTRE.lonDMS}, a poc més de
+        mig quilòmetre de la línia de platja. La protecció s’organitza en dos anells concèntrics:
+        una <strong>reserva integral</strong> de {FACTS.radiIntegral} milles nàutiques de radi,
+        on només s’hi pot entrar per motius científics, i una <strong>corona d’amortiment</strong>
+        de {FACTS.amplaAmortiment} milles nàutiques d’amplada al seu voltant, on s’hi permeten
+        usos limitats. El conjunt fa un cercle de {FACTS.radiTotal} milles nàutiques de radi i
+        {' '}{FACTS.superficie} hectàrees.
+      </p>
+      <p>
+        Els fons van del intermareal fins als {FACTS.fondariaMax} metres. És poc: tota la reserva
+        cap dins del que un bussejador recreatiu recorre en una immersió normal. Aquesta és
+        precisament la seva gràcia i la seva fragilitat.
+      </p>
+      <p>
+        <a href="/visitar">Com es pot visitar →</a>
+      </p>
+    </div>
+  </div>
+</Base>

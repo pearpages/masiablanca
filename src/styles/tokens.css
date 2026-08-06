@@ -1,0 +1,122 @@
+/*
+ * Masia Blanca — design tokens
+ *
+ * The palette is taken from the reserve's own materials, not from stock ocean
+ * blue: the mauve-pink of Mesophyllum alternans (the coralline alga that
+ * physically builds the grapissar), the bronze-olive of a Posidonia leaf, the
+ * genuinely green, turbid water of this sandy stretch of coast, and shell sand.
+ *
+ * Two registers, used deliberately:
+ *   default      — dry land. The field guide you read before you go in.
+ *   .submerged   — below the waterline. Dark, turbid, close.
+ */
+
+:root {
+  /* ---- raw palette ---------------------------------------------------- */
+  --c-ink: #0b1b22; /* water at the 25 m limit */
+  --c-deep: #102a31;
+  --c-turbid: #1f4a4a; /* the water column over the bars */
+  --c-turbid-light: #2e6360;
+  --c-corallina: #c4738c; /* Mesophyllum alternans */
+  --c-corallina-deep: #8e3556;
+  --c-corallina-light: #e9a5b6;
+  --c-posidonia: #6e7a3c;
+  --c-posidonia-deep: #4c5527;
+  --c-sorra: #e4dccb; /* shell sand */
+  --c-sorra-tint: #eee9dd;
+  --c-bone: #f7f4ee;
+  --c-white: #fdfcf9;
+
+  /* ---- semantic, dry register ----------------------------------------- */
+  --bg: var(--c-bone);
+  --bg-alt: var(--c-sorra-tint);
+  --bg-raised: var(--c-white);
+  --text: #14232a;
+  --text-muted: #5a6a6e;
+  --accent: var(--c-corallina-deep);
+  --accent-graphic: var(--c-corallina);
+  --rule: #d8d0be;
+  --rule-strong: #b9ae96;
+  --shadow: 0 1px 2px rgb(20 35 42 / 6%), 0 8px 24px -12px rgb(20 35 42 / 18%);
+
+  /* ---- habitat keys (used by the depth ruler and catalogue) ----------- */
+  --h-roca: var(--c-corallina);
+  --h-praderia: var(--c-posidonia);
+  --h-sorra: #b8935f;
+  --h-columna: #4b8ca6;
+  --h-elasmo: #6a6270;
+
+  /* ---- type ------------------------------------------------------------ */
+  --font-display: 'Bricolage Grotesque', 'Helvetica Neue', system-ui, sans-serif;
+  --font-body: 'Newsreader', Iowan Old Style, Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* fluid scale, 380px → 1400px viewport */
+  --step--1: clamp(0.82rem, 0.79rem + 0.13vw, 0.9rem);
+  --step-0: clamp(1.05rem, 1rem + 0.22vw, 1.19rem);
+  --step-1: clamp(1.26rem, 1.17rem + 0.38vw, 1.5rem);
+  --step-2: clamp(1.51rem, 1.36rem + 0.63vw, 1.9rem);
+  --step-3: clamp(1.81rem, 1.58rem + 1vw, 2.4rem);
+  --step-4: clamp(2.18rem, 1.81rem + 1.55vw, 3.03rem);
+  --step-5: clamp(2.61rem, 2.05rem + 2.36vw, 3.82rem);
+  --step-6: clamp(3.13rem, 2.29rem + 3.53vw, 4.82rem);
+
+  /* ---- space ----------------------------------------------------------- */
+  --sp-3xs: 0.25rem;
+  --sp-2xs: 0.5rem;
+  --sp-xs: 0.75rem;
+  --sp-s: 1rem;
+  --sp-m: 1.5rem;
+  --sp-l: 2.25rem;
+  --sp-xl: 3.5rem;
+  --sp-2xl: 5.5rem;
+  --sp-3xl: 8rem;
+
+  /* ---- measure & layout ------------------------------------------------ */
+  --measure: 66ch;
+  --page-max: 78rem;
+  --gutter: clamp(1.15rem, 4vw, 3rem);
+  --ruler-w: clamp(2.75rem, 6vw, 4.5rem);
+
+  --radius: 2px;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Below the waterline. Applied to sections, and to the whole page in dark mode. */
+.submerged {
+  --bg: var(--c-ink);
+  --bg-alt: var(--c-deep);
+  --bg-raised: #16343a;
+  --text: #e7efec;
+  --text-muted: #9db3af;
+  --accent: var(--c-corallina-light);
+  --accent-graphic: var(--c-corallina);
+  --rule: #24454a;
+  --rule-strong: #3d6c6e;
+  --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 10px 30px -14px rgb(0 0 0 / 70%);
+
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: var(--c-ink);
+    --bg-alt: var(--c-deep);
+    --bg-raised: #16343a;
+    --text: #e7efec;
+    --text-muted: #9db3af;
+    --accent: var(--c-corallina-light);
+    --accent-graphic: var(--c-corallina);
+    --rule: #24454a;
+    --rule-strong: #3d6c6e;
+    --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 10px 30px -14px rgb(0 0 0 / 70%);
+  }
+
+  /* In dark mode the whole page is already submerged; the .submerged sections
+     lift very slightly instead of dropping, so the rhythm survives. */
+  .submerged {
+    --bg: #08151b;
+    background-color: var(--bg);
+  }
+}

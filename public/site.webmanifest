@@ -1,0 +1,14 @@
+{
+  "name": "Reserva marina de la Masia Blanca",
+  "short_name": "Masia Blanca",
+  "description": "El grapissar del Vendrell: història, context i catàleg il·lustrat dels peixos.",
+  "lang": "ca",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0b1b22",
+  "theme_color": "#0b1b22",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

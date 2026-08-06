@@ -1,0 +1,154 @@
+---
+import Base from '../layouts/Base.astro';
+import { SOURCES, sourceByKey, FACTS } from '../lib/site.js';
+import '../styles/article.css';
+
+const description =
+  'Com el grapissar del Vendrell va passar de ser un fons de pesca conegut a ser la primera ' +
+  'zona submergida protegida de la costa catalana: l’ordre de 1999, les vedes successives i ' +
+  'l’Aula Aquàtica de la Masia Blanca.';
+
+const cite = (key) => sourceByKey(key);
+
+const fites = [
+  {
+    any: 'Abans',
+    que: 'Un topònim de pescadors',
+    text:
+      'El grapissar ja tenia nom molt abans de tenir estatut jurídic. La Masia Blanca és una casa de la costa del Vendrell, i el fons que hi queda al davant va prendre’n el nom. Per a les confraries de Calafell i el Vendrell era un caladero conegut i un lloc on el peix es feia gros, la mena de coneixement que passa de patró a patró i que rarament arriba a cap document.',
+  },
+  {
+    any: '1999',
+    que: 'La declaració',
+    text:
+      `L’Ordre de 21 de desembre de 1999 estableix la reserva marina de Masia Blanca davant del terme municipal del Vendrell. La proposta no va venir de dalt: la van impulsar conjuntament la Generalitat de Catalunya, l’Ajuntament del Vendrell i la Confraria de Pescadors de Calafell. La superfície protegida és de ${FACTS.superficie} hectàrees en aigües exteriors, competència de l’Estat.`,
+    font: 'boe-1999',
+  },
+  {
+    any: '2000',
+    que: 'La primera de tot el litoral',
+    text:
+      'La premsa del gener del 2000 recull la novetat amb una frase que encara es cita: és la primera zona submergida aïllada i preservada de tot el litoral català. L’alcalde del Vendrell hi veu un atractiu per al busseig; les confraries, un banc de reproductors que hauria de repoblar els caladors d’un radi de vint-i-cinc quilòmetres.',
+    font: 'vilaweb-2000',
+  },
+  {
+    any: '2004',
+    que: 'La veda',
+    text:
+      'S’estableix una veda que suspèn temporalment la pesca i el busseig dins la reserva per deixar que els fons es recuperin sense pressió. La mesura era transitòria sobre el paper.',
+    font: 'mapa-web',
+  },
+  {
+    any: '2007 · 2019 · 2023',
+    que: 'La veda que no s’acaba mai',
+    text:
+      'La suspensió es prorroga una vegada i una altra: l’Ordre APA/1993/2007, després l’APA/547/2019 i finalment l’APA/592/2023. Vint anys de pròrrogues successives d’una mesura nascuda com a provisional expliquen bastant bé la història de la gestió d’aquest espai.',
+    font: 'boe-2023',
+  },
+  {
+    any: 'Avui',
+    que: 'Divulgació i vigilància',
+    text:
+      'L’Ajuntament del Vendrell hi organitza l’Aula Aquàtica de la Masia Blanca, activitats guiades de snorkel que obren la reserva al públic sense obrir-la a l’extracció. Alhora, la premsa local recull la reclamació persistent de més vigilància contra el furtivisme i de recuperar el seguiment científic de l’ecosistema, que ha estat intermitent.',
+    font: 'diari-tarragona',
+  },
+];
+---
+
+<Base
+  title="Història"
+  description={description}
+  image="/og/historia.png"
+  imageAlt="Corballs de roca dins una cavitat"
+  crumbs={[{ name: 'Història', href: '/historia' }]}
+>
+  <header class="art-head page">
+    <p class="label">1999 → avui</p>
+    <h1>Com es protegeix un tros de mar</h1>
+    <p class="art-head__lede">
+      La reserva marina de la Masia Blanca no va néixer d’una campanya ecologista ni d’una
+      catàstrofe. Va néixer d’un acord poc habitual: un ajuntament, un govern autonòmic i una
+      confraria de pescadors demanant al mateix temps que es tanqués un fons de pesca.
+    </p>
+  </header>
+
+  <div class="art page">
+    <ol class="timeline">
+      {
+        fites.map((f) => (
+          <li class="tl">
+            <span class="tl__any">{f.any}</span>
+            <div>
+              <h2 class="tl__que">{f.que}</h2>
+              <p class="tl__text">{f.text}</p>
+              {f.font && (
+                <p class="tl__font data">
+                  <a href={cite(f.font).url} rel="external">{cite(f.font).editor}</a>
+                </p>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="prose">
+      <h2>Per què una confraria demana que li tanquin un caladero</h2>
+      <p>
+        L’argument no és sentimental, és aritmètic. Una zona vedada actua com a banc de
+        reproductors: els individus que hi creixen sense pressió arriben a mides que ja no
+        s’assoleixen a fora, i la fecunditat d’un peix creix molt més de pressa que el seu pes.
+        Els ous i les larves surten de la reserva amb els corrents, i els adults també, quan la
+        densitat interior puja prou. L’efecte es nota als caladors del voltant amb uns quants
+        anys de retard.
+      </p>
+      <p>
+        Perquè funcioni cal una condició que sona òbvia i que és el punt feble de gairebé totes
+        les reserves marines del món: que la protecció es faci complir. Sense vigilància efectiva,
+        una reserva marina és una línia en un mapa i un cartell a la platja.
+      </p>
+
+      <h2>Què s’hi pot fer i què no</h2>
+      <p>
+        La reserva no és un espai tancat sense matisos. La zonificació distingeix la reserva
+        integral central, on l’accés queda restringit a la investigació, de la corona
+        d’amortiment del voltant, on la norma preveu usos limitats: la pesca professional amb
+        <strong> palangre de fons i tresmall</strong> — dos arts tradicionals i selectius,
+        justament els que la declaració volia afavorir davant de l’arrossegament — i el busseig
+        i la presa científica de mostres sota autorització.
+      </p>
+      <p>
+        El detall d’aquests usos ha anat canviant amb les vedes successives.
+        <a href="/visitar">A la pàgina de visita hi ha l’estat pràctic actual</a>, però la font
+        que mana sempre és el text vigent al BOE i les indicacions del servei de guardapesques.
+      </p>
+
+      <h2>Una nota sobre les xifres</h2>
+      <p>
+        Les fonts no coincideixen, i val la pena dir-ho en comptes de triar-ne una en silenci. La
+        pàgina del ministeri parla de {FACTS.superficie} hectàrees; el seu propi fullet divulgatiu
+        en diu 449 «en aigües exteriors»; la crònica periodística de l’any 2000 parlava de 278
+        hectàrees, que probablement es refereixen només a la superfície de roca. Amb les
+        fondàries passa el mateix: {FACTS.barresMin}–{FACTS.barresMax} m per a les barres segons
+        el ministeri, fins a 14,5 m segons la premsa del 2000, fins a 16 m segons la Viquipèdia.
+      </p>
+      <p>
+        Aquest lloc pren com a referència les xifres oficials del ministeri i de l’ordre
+        publicada al BOE, i deixa constància de la resta.
+        <a href="/fonts">Totes les fonts, una per una →</a>
+      </p>
+    </div>
+
+    <aside class="callout">
+      <h2>Les normes, en primera mà</h2>
+      <p>
+        {SOURCES.filter((s) => s.tipus === 'Norma').map((s, i) => (
+          <>
+            {i > 0 && ' · '}
+            <a href={s.url} rel="external">{s.titol.split(' por la que')[0]}</a>
+          </>
+        ))}
+      </p>
+    </aside>
+  </div>
+</Base>

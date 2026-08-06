@@ -1,0 +1,56 @@
+---
+import { NAV, FOOTER_NAV, CENTRE } from '../lib/site.js';
+import './SiteFooter.css';
+---
+
+<footer class="colophon">
+  <div class="colophon__inner page">
+    <div class="colophon__block">
+      <p class="label">Reserva marina d’interès pesquer</p>
+      <p class="colophon__lede">
+        El grapissar de la Masia Blanca, davant de Coma-ruga i el Francàs, al Vendrell (Baix
+        Penedès). Protegit des del 1999.
+      </p>
+      <p class="data colophon__coords">
+        <span>{CENTRE.latDMS}</span>
+        <span>{CENTRE.lonDMS}</span>
+      </p>
+    </div>
+
+    <nav class="colophon__nav" aria-label="Peu de pàgina">
+      <div>
+        <p class="label">Seccions</p>
+        <ul>
+          {NAV.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <p class="label">Aquest lloc</p>
+        <ul>
+          {FOOTER_NAV.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <p class="label">Oficial</p>
+        <ul>
+          <li>
+            <a href="https://www.mapa.gob.es/es/pesca/temas/proteccion-recursos-pesqueros/reservas-marinas-de-espana/masia-blanca/" rel="external">
+              Xarxa de reserves marines
+            </a>
+          </li>
+          <li>
+            <a href="https://www.elvendrellturisme.com/ca/" rel="external">El Vendrell Turisme</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <p class="colophon__legal">
+      Lloc divulgatiu independent, sense cap vinculació oficial amb el Ministeri ni amb
+      l’Ajuntament del Vendrell. Els textos són originals; les fotografies provenen de Wikimedia
+      Commons i es reprodueixen amb l’autoria i la llicència de cada autor, detallades a la
+      pàgina de <a href="/credits">crèdits</a>. Els noms populars catalans procedeixen de la
+      Viquipèdia (CC BY-SA 4.0). Vegeu totes les <a href="/fonts">fonts</a>.
+    </p>
+  </div>
+</footer>

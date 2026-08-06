@@ -1,0 +1,160 @@
+.srcgroup + .srcgroup {
+  margin-block-start: var(--sp-l);
+}
+
+.srcgroup__title {
+  padding-block-end: var(--sp-2xs);
+  border-block-end: 1px solid var(--rule-strong);
+}
+
+.srclist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.src {
+  padding-block: var(--sp-s);
+  border-block-end: 1px solid var(--rule);
+  max-width: 68ch;
+}
+
+.src__titol {
+  font-size: var(--step-0);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.src__titol a {
+  color: var(--text);
+  text-decoration-color: var(--rule-strong);
+}
+
+.src__titol a:hover {
+  color: var(--accent);
+}
+
+.src__editor {
+  margin-block-start: 0.15rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.src__nota {
+  margin-block-start: var(--sp-2xs);
+  font-size: var(--step--1);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+/* ---- discrepancies ------------------------------------------------------ */
+
+.discrep,
+.citades,
+.metode {
+  margin-block-start: var(--sp-2xl);
+}
+
+.discrep h2,
+.citades h2,
+.metode h2 {
+  font-size: var(--step-2);
+  max-width: 24ch;
+}
+
+.discrep__lede,
+.citades__lede {
+  max-width: var(--measure);
+  margin-block-start: var(--sp-s);
+  font-size: var(--step-0);
+  line-height: 1.6;
+}
+
+.discrep__table {
+  width: 100%;
+  min-width: 40rem;
+  margin-block-start: var(--sp-m);
+  border-collapse: collapse;
+  font-size: var(--step--1);
+}
+
+.discrep__table th {
+  padding: var(--sp-2xs) var(--sp-s) var(--sp-2xs) 0;
+  text-align: start;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-block-end: 1px solid var(--rule-strong);
+}
+
+.discrep__table td {
+  padding: 0.6rem var(--sp-s) 0.6rem 0;
+  vertical-align: top;
+  border-block-end: 1px solid var(--rule);
+  line-height: 1.5;
+}
+
+.discrep__table td:nth-child(2) {
+  white-space: nowrap;
+  color: var(--accent);
+}
+
+.discrep__table td:last-child {
+  color: var(--text-muted);
+}
+
+/* ---- cited species ------------------------------------------------------ */
+
+.citades__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 0 var(--sp-m);
+  margin: var(--sp-m) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.citades__list li {
+  padding-block: 0.45rem;
+  border-block-end: 1px solid var(--rule);
+  font-size: var(--step--1);
+}
+
+.citades__list a {
+  color: var(--text);
+  text-decoration-color: var(--rule-strong);
+}
+
+.citades__list a:hover {
+  color: var(--accent);
+}
+
+.citades__on {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+.citades__nota {
+  max-width: var(--measure);
+  margin-block-start: var(--sp-m);
+  font-size: var(--step--1);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.metode ul {
+  max-width: var(--measure);
+  margin-block-start: var(--sp-s);
+  padding-inline-start: 1.1em;
+  font-size: var(--step--1);
+  line-height: 1.6;
+}
+
+.metode li + li {
+  margin-block-start: var(--sp-2xs);
+}

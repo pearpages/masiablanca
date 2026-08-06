@@ -1,0 +1,97 @@
+.ruler {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 30;
+  width: var(--ruler-w);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  mix-blend-mode: normal;
+}
+
+/* The ruler needs a left gutter of its own to sit in. Below that, the page
+   uses the whole width and the depth information lives inline instead. */
+@media (width >= 68rem) {
+  .ruler {
+    display: flex;
+  }
+}
+
+/* Once JS is running, the ruler only appears when you actually start
+   descending — at the top of the page it would compete with the reef
+   diagram's own depth scale. Without JS it simply stays visible. */
+.ruler.is-ready {
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+
+.ruler.is-ready.is-active {
+  opacity: 1;
+}
+
+.ruler__scale {
+  position: relative;
+  width: 100%;
+  height: min(60svh, 26rem);
+  border-inline-start: 1px solid var(--rule-strong);
+  margin-inline-start: 42%;
+}
+
+.ruler__band {
+  position: absolute;
+  inset-inline-start: -1px;
+  inset-block-start: var(--from);
+  height: calc(var(--to) - var(--from));
+  width: 5px;
+  background-color: var(--accent-graphic);
+  opacity: 0.85;
+}
+
+.ruler__tick {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: var(--at);
+  width: 9px;
+  border-block-start: 1px solid var(--rule-strong);
+}
+
+.ruler__num {
+  position: absolute;
+  inset-inline-end: calc(100% + 0.4rem);
+  inset-block-start: -0.62em;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.ruler__cursor {
+  position: absolute;
+  inset-inline-start: -4px;
+  inset-block-start: var(--at, 0%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--text);
+  transform: translateY(-50%);
+  transition: opacity 0.3s var(--ease);
+  opacity: 0;
+}
+
+.ruler.is-active .ruler__cursor {
+  opacity: 1;
+}
+
+.ruler__readout {
+  position: absolute;
+  inset-inline-start: calc(100% + 0.45rem);
+  inset-block-start: 50%;
+  translate: 0 -50%;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--text);
+}

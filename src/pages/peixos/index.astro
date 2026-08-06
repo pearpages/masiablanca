@@ -1,0 +1,183 @@
+---
+import Base from '../../layouts/Base.astro';
+import SpeciesCard from '../../components/SpeciesCard.astro';
+import { SITE } from '../../lib/site.js';
+import { ALL, GROUPED } from '../../lib/species.js';
+import '../../styles/catalog.css';
+
+const description =
+  `Catàleg il·lustrat de ${ALL.length} espècies de peixos que es poden trobar a la reserva marina ` +
+  'de la Masia Blanca, davant de Coma-ruga i el Francàs. Nom català, nom científic, fondària, ' +
+  'fotografia i enllaç a la Viquipèdia per a cadascuna.';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `Peixos de la reserva marina de la Masia Blanca`,
+  description,
+  numberOfItems: ALL.length,
+  itemListElement: ALL.map((s, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    url: new URL(s.url, SITE.url).href,
+    name: `${s.nom} (${s.cientific})`,
+  })),
+};
+---
+
+<Base
+  title="Els peixos del grapissar"
+  description={description}
+  image="/og/peixos.png"
+  imageAlt="Bancs de castanyoles sobre les barres del grapissar"
+  crumbs={[{ name: 'Els peixos', href: '/peixos' }]}
+  jsonLd={jsonLd}
+>
+  <header class="cat-head page">
+    <p class="label">Catàleg · {ALL.length} espècies</p>
+    <h1>Què hi ha, exactament</h1>
+    <div class="cat-head__cols">
+      <p class="cat-head__lede">
+        Aquesta llista recull les espècies de peixos que es poden trobar al grapissar de la Masia
+        Blanca i als fons que l’envolten, ordenades pels cinc ambients de la reserva. Cada fitxa
+        enllaça amb l’article de la Viquipèdia en català i amb la categoria de Wikimedia Commons
+        d’on prové la fotografia.
+      </p>
+      <p class="cat-head__nota">
+        No és un cens. No hi ha cap inventari científic públic de la ictiofauna d’aquesta reserva
+        en concret: el catàleg s’ha construït a partir dels hàbitats que hi ha documentats i de
+        la fauna coneguda d’aquests hàbitats a la costa catalana. Les espècies que les fonts
+        oficials citen explícitament hi estan
+        <a href="/fonts">marcades a la pàgina de fonts</a>.
+      </p>
+    </div>
+  </header>
+
+  <div class="filters page" data-filters>
+    <div class="filters__search">
+      <label class="label" for="cerca">Cerca</label>
+      <input
+        id="cerca"
+        type="search"
+        placeholder="orada, Sparus, escórpora…"
+        autocomplete="off"
+        data-search
+      />
+    </div>
+    <div class="filters__habitats" role="group" aria-label="Filtra per hàbitat">
+      <button type="button" class="chip is-on" data-filter="all" aria-pressed="true">
+        Tots <span class="data">{ALL.length}</span>
+      </button>
+      {
+        GROUPED.map((g) => (
+          <button
+            type="button"
+            class="chip"
+            data-filter={g.id}
+            aria-pressed="false"
+            style={`--key:${g.color}`}
+          >
+            {g.curt} <span class="data">{g.species.length}</span>
+          </button>
+        ))
+      }
+    </div>
+    <p class="filters__count label" data-count aria-live="polite"></p>
+  </div>
+
+  {
+    GROUPED.map((g, gi) => (
+      <section class="group page" id={g.id} data-group={g.id}>
+        <header class="group__head" style={`--key:${g.color}`}>
+          <h2>{g.nom}</h2>
+          <p class="group__meta data">
+            {g.profunditat} · {g.species.length} espècies
+          </p>
+          <p class="group__resum">{g.resum}</p>
+        </header>
+        <div class="group__grid">
+          {g.species.map((s, i) => (
+            <SpeciesCard species={s} eager={gi === 0 && i < 3} />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+
+  <p class="page cat-empty" data-empty hidden>
+    Cap espècie no coincideix amb la cerca. <button type="button" data-reset>Torna a mostrar-les totes</button>
+  </p>
+</Base>
+
+<script>
+  const root = document.querySelector('[data-filters]');
+  if (root) {
+    const search = root.querySelector('[data-search]') as HTMLInputElement;
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const counter = root.querySelector('[data-count]');
+    const empty = document.querySelector('[data-empty]') as HTMLElement | null;
+    const cards = [...document.querySelectorAll<HTMLElement>('.card')];
+    const groups = [...document.querySelectorAll<HTMLElement>('[data-group]')];
+    const total = cards.length;
+
+    let habitat = 'all';
+    let query = '';
+
+    const strip = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+    function apply() {
+      const q = strip(query.trim());
+      let shown = 0;
+
+      for (const card of cards) {
+        const okHabitat = habitat === 'all' || card.dataset.habitat === habitat;
+        const hay = strip(`${card.dataset.nom} ${card.dataset.sci}`);
+        const okQuery = q === '' || hay.includes(q);
+        const on = okHabitat && okQuery;
+        card.hidden = !on;
+        if (on) shown++;
+      }
+
+      for (const group of groups) {
+        const any = [...group.querySelectorAll<HTMLElement>('.card')].some((c) => !c.hidden);
+        group.hidden = !any;
+      }
+
+      if (counter) {
+        counter.textContent =
+          shown === total ? `${total} espècies` : `${shown} de ${total} espècies`;
+      }
+      if (empty) empty.hidden = shown > 0;
+    }
+
+    for (const chip of chips) {
+      chip.addEventListener('click', () => {
+        habitat = chip.dataset.filter ?? 'all';
+        for (const c of chips) {
+          const on = c === chip;
+          c.classList.toggle('is-on', on);
+          c.setAttribute('aria-pressed', String(on));
+        }
+        apply();
+      });
+    }
+
+    search?.addEventListener('input', () => {
+      query = search.value;
+      apply();
+    });
+
+    document.querySelector('[data-reset]')?.addEventListener('click', () => {
+      query = '';
+      habitat = 'all';
+      if (search) search.value = '';
+      chips.forEach((c, i) => {
+        c.classList.toggle('is-on', i === 0);
+        c.setAttribute('aria-pressed', String(i === 0));
+      });
+      apply();
+    });
+
+    apply();
+  }
+</script>
