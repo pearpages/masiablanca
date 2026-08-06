@@ -189,26 +189,57 @@ function author(meta) {
  *               does not, so search hits must name the binomial themselves.
  */
 const DISQUALIFY = [
-  /market|mercat|mercado|poissonn|fishmonger|pescheria|pescader|stall|lonja|subhasta/i,
+  /market|\bmarche|mercat|mercado|mercato|abastos|\bventa\b|\bvenda\b|for sale|in vendita|zum verkauf|poissonn|fishmonger|pescheria|pescader|stall|lonja|subhasta/i,
   /\bdead\b|deceased|\bcatch\b|caught|angler|grilled|cooked|recipe|sushi|fillet|filet|frit|plate of|\bmeal\b|restaurant/i,
-  /museum|mus[ée]e|museo|specimen|skelet|squelett|esquelet|esqueleto|otolith|parasit|dissect|preserved|formalin|jar\b|taxiderm|mnhn|naturkunde|natural history|col{1,2}ecti[oó]n de/i,
+  // Speared or landed: dead and out of the water, however good the photograph.
+  /chasse sous-marine|\bpeches?\b|pesca (submarina|deportiva|recreativa)|spearfish|speargun|harpoon|harpon|\barpo|\btrain[ae]\b|\d+ ?kg\b|\bcapturas?\b|capturad[oa]s?\b/i,
+  // A sardine is famous as a tin, not as an animal: the food photos outnumber
+  // the fish on Commons for every edible species. Catch them in the languages
+  // the Mediterranean uploads in, not only in English.
+  // Bare "plates" is not in here: fish have bony plates and anatomical
+  // descriptions talk about them constantly.
+  /\bfood\b|image of food|cuisine|cuina|cocina|culinar|gastronom|\btapas?\b|\bdish\b|\bplato\b|\bplat del?\b|recept|recette|\bserved\b|servit|servid/i,
+  // «conserva» only as a whole word: «marine conservation» must survive.
+  /canned|tinned|\bcan of\b|\btin of\b|\bconserv[ae]s?\b|conservera|llauna|\blata\b|boite de|eingelegt|marinat|marinad|pickled|smoked|ahumad|\bfume|salted|salting|salazon|salao|escabetx|escabech|\bbait\b|\besca\b/i,
+  /\bfried\b|\bfrying\b|frit[oa]s?\b|fregit|\bbrasa|barbacoa|barbecue|\basad[oa]s?\b|assad[oa]s?\b|grelhad|graellad|\bplancha\b|planxa\b|\bhorno\b|\bforn\b|roasted|boiled|hervid|bullit/i,
+  /museum|musee|museo|\bmuseu\b|specimen|skelet|squelett|esquelet|esqueleto|otolith|parasit|dissect|preserved|formalin|jar\b|taxiderm|mnhn|naturkunde|natural history|collection de/i,
   // Research-survey deck shots: a fish on a measuring board is not the sea.
-  /measuring board|on deck|research (survey|cruise)|cend\d|\bstn \d|survey photo|by-?catch/i,
-  /stomach|stomacal|estomac|gut content|contenu|viscer|entrail|autops|necrops|larva|\begg[s]?\b|ou[s]? de/i,
-  /aquarium|aquária|acuario|aquarien|sea ?life|sea ?world|oceanari|oceanogr|océanopolis|oceanopolis|nausicaá|nausicaa|marineland|loro ?parque|\bzoo\b|captiv|\btank\b|vivarium|\bparque\b|\bpark\b/i,
+  /measuring board|on deck|prelevement|echantillon|sampling|acoustic response|acoustique|research (survey|cruise)|cend\d|\bstn \d|survey photo|by-?catch/i,
+  /stomach|stomacal|estomac|gut content|contenu|viscer|entrail|autops|necrops|larva|larve|\begg[s]?\b|ou[s]? de|œuf|oeuf|huevos? de|egg ?case|mermaid'?s purse|ootheca|capsula/i,
+  // Hatchery and laboratory work: blue tanks, tubing and labels, no sea.
+  // Careful: "alevins" alone will not do — the fry photographed off the beach
+  // at Argelès are as wild as the adults. The rearing context has to be there.
+  /incubation|incubaci|hatchling|rearing|[ée]levage|criadero|alevinage|\bbassin|laborator|laboratoir|\blab\b|petri|microscop|in vitro/i,
+  // Out of the water for good: stranded, discarded, or washed up.
+  /discard|washed ashore|washed up|stranded|beached|on the beach|a la platja|carcass|carcaca|cadaver|remains of/i,
+  // No bare "park"/"parque": «Parque natural da Arrábida» is open sea, not a zoo.
+  /aquarium|aquaria|acuario|aquarien|akvari|\baquari|acquari|acqmilano|ecomare|sea ?life|sea ?world|marine world|oceanari|oceanogr|oceanopolis|nausicaa|marineland|loro ?parque|\bzoo\b|captiv|\btank\b|vivarium|wildlife park|animal park|theme park|havsparken/i,
   /festival|matsuri|parade|carnival|statue|sculpture|monument|mural|graffiti|coat of arms|logo|stamp|coin|banknote|first day cover|philatel|postcard|poster/i,
   // Another animal is the subject and our fish is the prey.
   /\bsnake\b|natrix|serpent|heron|cormorant|gull\b|otter|octopus eating|predation|\beating\b|\bprey\b|being eaten/i,
   /\bmap\b|distribution|chart|diagram|graph\b|infographic/i,
-  /fish ?farm|aquacultur|piscicultur|hatchery|net pen|trawl/i,
+  // A Commons taxon category also collects pure science: a protein first
+  // described from this species ends up filed under its name.
+  /\bfigure \d|\b10\.\d{4}[-/]|molecular structure|crystal structure|cartoon representation|\bprotein\b|\bpdb\b|amino acid|sequence align/i,
+  /fish ?farm|aquacultur|piscicultur|hatchery|net pen|trawl|chalut|arrossegament/i,
 ];
 
 const PREFER = [/underwater|in situ|snorkel|scuba|diving|\breef\b|posidoni|seagrass|natural habitat/i];
 
-const ARCHAIC = /\b1[6-9]\d{2}\b|lithograph|gravure|engraving|illustrat|drawing|plate \d|swainson|couch|fmib|bloch|cuvier's|histoire naturelle/i;
+const ARCHAIC =
+  /\b1[6-9]\d{2}\b|lithograph|gravure|engraving|illustrat|drawing|plate \d|\bpl\.? ?\d{1,3}\b|\bfig\.? ?\d|swainson|couch|gervais|fmib|bloch|cuvier's|histoire naturelle|history of the fishes|painting|schilderij/i;
+
+/**
+ * Every filter matches text with the diacritics folded away. Otherwise
+ * "marché", "Oceanário" and "gastronómica" slip past "marche", "oceanari" and
+ * "gastronom", and every pattern has to be written twice — JavaScript has no
+ * word boundary after an accented vowel. Binomials are ASCII: folding costs
+ * nothing.
+ */
+const fold = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 function relevanceText(title, meta) {
-  return `${title.replace(/^File:/, '')} ${plain(meta.ImageDescription?.value)}`;
+  return fold(`${title.replace(/^File:/, '')} ${plain(meta.ImageDescription?.value)}`);
 }
 
 function namesThisSpecies(hay, cientific) {
@@ -220,15 +251,36 @@ function namesThisSpecies(hay, cientific) {
   return lower.includes(genus.toLowerCase()) && !!epithet && lower.includes(epithet.toLowerCase());
 }
 
+/**
+ * The commonest trap is another species of the same genus: files land in a
+ * parent category and "Sphyraena viridensis" ends up illustrating the fitxa of
+ * "Sphyraena sphyraena". If the text names a congener and never names our own
+ * binomial in full, it is not our fish.
+ */
+function namesACongener(hay, cientific) {
+  const [genus, epithet] = cientific.split(' ');
+  if (!epithet) return null;
+  if (hay.toLowerCase().includes(cientific.toLowerCase())) return null;
+  for (const m of hay.matchAll(new RegExp(`\\b${genus}\\s+([a-z]{3,})\\b`, 'gi'))) {
+    if (m[1].toLowerCase() !== epithet.toLowerCase()) return m[0];
+  }
+  return null;
+}
+
 /** Hard gate. Returns a reason string when the image must not be used. */
-function disqualified(img, cientific, source) {
+function disqualified(img, cientific, source, banned) {
   const hay = img.relevanceText;
+  // Some photographs are wrong in ways no description betrays — an empty egg
+  // case captioned with nothing but the binomial. "excloure" is the manual veto.
+  if (banned.has(img.file)) return 'exclosa a mà (excloure)';
   const hit = DISQUALIFY.find((r) => r.test(hay));
   if (hit) return `descartada (${String(hit).slice(1, 28)}…)`;
   if (/\.(svg|gif|tiff?|ogv|webm)$/i.test(img.file)) return 'format no vàlid';
   if ((img.width ?? 0) < 700) return `massa petita (${img.width}px)`;
   // A search hit is only a guess until the file itself names the species.
   if (source === 'search' && !namesThisSpecies(hay, cientific)) return 'la cerca no confirma l’espècie';
+  const congener = namesACongener(hay, cientific);
+  if (congener) return `és un congènere (${congener})`;
   // A wrong binomial in the title is a strong signal it is another animal.
   const otherBinomial = /\b([A-Z][a-z]{3,})\s([a-z]{3,})\b/.exec(img.file.replace(/^File:/, ''));
   if (
@@ -316,7 +368,7 @@ async function commonsInfo(titles) {
   return (data.query?.pages ?? []).filter((p) => !p.missing && p.imageinfo?.[0]);
 }
 
-async function commonsCategoryFiles(cientific, limit = 24) {
+async function commonsCategoryFiles(cientific, limit = 120) {
   const data = await api(COMMONS, {
     action: 'query',
     list: 'categorymembers',
@@ -436,19 +488,30 @@ for (const sp of targets) {
   // Viquipèdia lead image, then the Commons category, then a plain search.
   /** @type {Map<string, 'lead'|'category'|'search'>} */
   const candidates = new Map();
+  const banned = new Set(
+    (sp.excloure ?? []).map((f) => (f.startsWith('File:') ? f : `File:${f}`)),
+  );
   const pin = sp.imatge ? (sp.imatge.startsWith('File:') ? sp.imatge : `File:${sp.imatge}`) : null;
   if (pin) candidates.set(pin, 'lead');
   if (w?.leadFile && !candidates.has(w.leadFile)) candidates.set(w.leadFile, 'lead');
   for (const t of await commonsCategoryFiles(sp.commons ?? sp.cientific)) {
     if (!candidates.has(t)) candidates.set(t, 'category');
   }
-  if (candidates.size < 6) {
-    for (const t of await commonsSearch(sp.cientific)) {
-      if (!candidates.has(t)) candidates.set(t, 'search');
-    }
+  for (const t of await commonsSearch(sp.cientific)) {
+    if (!candidates.has(t)) candidates.set(t, 'search');
   }
 
-  const titles = [...candidates.keys()].slice(0, 32);
+  // The category comes back in alphabetical order and can hold hundreds of
+  // files, so taking the first N picks by initial letter, not by relevance:
+  // for the sardine that meant a tin, a barbecue and a laboratory long before
+  // the first live fish. Files that name the binomial in their own title —
+  // «Sardina pilchardus1.jpg» — are the ones an editor labelled deliberately.
+  const rank = ([file, source]) =>
+    source === 'lead' ? 0 : namesThisSpecies(file.replace(/^File:/, ''), sp.cientific) ? 1 : 2;
+  const titles = [...candidates.entries()]
+    .sort((a, b) => rank(a) - rank(b))
+    .map(([t]) => t)
+    .slice(0, 32);
   const pages = [];
   for (let i = 0; i < titles.length; i += 12) {
     pages.push(...(await commonsInfo(titles.slice(i, i + 12))));
@@ -465,7 +528,7 @@ for (const sp of targets) {
       rejected.push(`${img.file} — sense autoria o llicència resolubles`);
       continue;
     }
-    const why = disqualified(img, sp.cientific, source);
+    const why = disqualified(img, sp.cientific, source, banned);
     if (why) {
       rejected.push(`${img.file} — ${why}`);
       continue;
@@ -479,10 +542,16 @@ for (const sp of targets) {
   // Only fall back to engravings when there is no photograph at all.
   const usable = modern.length > 0 ? modern : archaic.slice(0, 1);
 
-  // Three photos of the same fish by the same author on one page is filler.
+  // Three photos of the same fish by the same author on one page is filler,
+  // and Commons keeps "X.jpg" and "X (cropped).jpg" side by side: two crops of
+  // one photograph are not a gallery.
   const perAuthor = new Map();
+  const basePhoto = new Set();
   const chosen = [];
   for (const img of usable) {
+    const base = img.file.replace(/\s*\((cropped|rotated)\)/i, '');
+    if (basePhoto.has(base)) continue;
+    basePhoto.add(base);
     const key = img.author?.name ?? 'anon';
     const n = perAuthor.get(key) ?? 0;
     if (n >= 2 && chosen.length >= 2) continue;

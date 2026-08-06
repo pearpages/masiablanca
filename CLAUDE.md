@@ -78,9 +78,20 @@ Tipografies autoallotjades: Bricolage Grotesque (display), Newsreader (text) i I
 1. Edita l'entrada a `data/species.js` (o afegeix-n'hi una de nova).
 2. `pnpm species -- --only=<slug>` — o amb `--force` per tornar a baixar les imatges.
 3. Si la foto principal no és bona, fixa-la amb `imatge: 'File:…'` a l'entrada i repeteix amb
-   `--force`. El guió descarta sols els mercats, aquaris, museus, gravats antics i les fotos
-   d'una altra espècie, però la darrera paraula és teva.
+   `--force`. El guió descarta els mercats, el peix cuinat o en conserva, els aquaris, els
+   museus, els vivers i laboratoris, el peix pescat o arponat, els gravats antics, les figures
+   d'article científic i les fotos d'un congènere, però la darrera paraula és teva: el que cap
+   filtre de text pot veure —un exemplar mort sobre fons negre, una càpsula ovígera buida amb
+   un peu de foto que només diu el binomi— es veta a mà amb `excloure: ['File:…']`.
 4. `pnpm og` per refer la targeta social, i `pnpm check`.
+
+**Sempre cal mirar les imatges.** Els filtres treballen amb el títol i la descripció del fitxer
+de Commons, i tots dos poden ser muts o mentir. Fins que no s'obren, «File:2006 sardines can
+open.jpg» és una sardina com qualsevol altra.
+
+Els patrons es comparen contra el text sense accents (`fold()`): «Oceanário», «marché» i
+«gastronómica» no s'escapaven de cap altra manera, perquè `\b` no existeix darrere d'una vocal
+accentuada en JavaScript.
 
 ## Desplegament
 
@@ -97,11 +108,24 @@ lloc i el comprovador falla si el canonical no hi coincideix.
 
 ## Estat
 
-Fet: tot l'anterior. 77 pàgines, 69 espècies, 265 fotografies, `pnpm check` en verd.
+Fet: tot l'anterior. 77 pàgines, 69 espècies, 259 fotografies, `pnpm check` en verd.
+
+Revisió d'imatges (6 d'agost de 2026): totes 69 fitxes obertes i mirades una per una. La
+sardina s'il·lustrava amb una llauna oberta, la graellada i dos tancs d'incubació sense cap
+peix; el llobarro, el reig, el moll de roca, el sonso, la lluerna, el sorell, l'agulla, el
+seitó, la rata, la palomida, el gat de mar i la càntera, amb peix de peixateria, de plat o
+acabat de pescar; l'espet duia dues fotos de *Sphyraena viridensis*; la rajada estrellada, una
+bossa de sirena buida; la vaca tremolosa, l'estructura d'una proteïna. Arrel del problema: la
+categoria de Commons arribava per ordre alfabètic i es tallava als 24 primers fitxers, de
+manera que per a les espècies comestibles el peix viu no hi entrava mai. Ara els fitxers que
+porten el binomi al títol passen al davant.
 
 Pendent:
 - Crear el remot de GitHub, configurar el DNS i fer el primer desplegament.
 - Comprovar Lighthouse contra el domini real un cop publicat.
+- La palomida i el milà es queden amb una sola imatge: a Commons no hi ha cap fotografia lliure
+  d'aquestes dues espècies vives al seu medi (només aquaris, trofeus de pesca i làmines). Si
+  n'apareix cap, són les dues fitxes a refer primer.
 - Fotografies del grapissar mateix: totes les imatges actuals són de la mateixa espècie però
   fetes en altres indrets del Mediterrani i de l'Atlàntic. Si algun dia n'hi ha de fetes a
   Coma-ruga amb llicència lliure, són molt millors.

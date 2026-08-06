@@ -21,6 +21,9 @@
  *   onTrobar     on buscar-lo concretament dins el grapissar
  *   commons      categoria de Commons, si difereix del nom científic
  *   imatge       fitxer de Commons triat a mà com a imatge principal, si cal
+ *   excloure     fitxers de Commons vetats a mà, quan cap filtre de text els
+ *                pot detectar (una càpsula ovígera buida amb un peu de foto
+ *                que només diu el nom científic, per exemple)
  */
 
 /** @type {Array<Record<string, any>>} */
@@ -367,6 +370,9 @@ export const SPECIES = [
       'És una de les poques espardenyes de la família que fa niu: el mascle neteja una clapa de sorra o grava, hi atrau les femelles i després en defensa els ous. Durant aquest període es tenyeix de fosc i li apareixen unes bandes verticals clares.',
     ],
     onTrobar: 'A mitja aigua sobre les barres, i a les clarianes de sorra durant la primavera.',
+    excloure: [
+      'File:Spondyliosoma cantharum.png', // exemplar pescat, a la mà, fora de l’aigua
+    ],
   },
   {
     slug: 'dentol',
@@ -402,6 +408,9 @@ export const SPECIES = [
       'Freqüenta els fons mixtos de roca i sorra i, com el dèntol, és una espècie que la pesca ha rarificat molt al litoral català. Els juvenils entren als herbeis; els adults es queden al perímetre fondo.',
     ],
     onTrobar: 'A la vora exterior del grapissar, sobre fons de roca esquitxada de sorra.',
+    excloure: [
+      'File:Pagrus pagrus.jpg', // exemplar dins una cubeta fotogràfica de la NOAA
+    ],
   },
   {
     slug: 'tord-negre',
@@ -699,6 +708,9 @@ export const SPECIES = [
       'El mascle excava un petit clot a la sorra i hi construeix un niu d’algues, que vigila i aireja contínuament. És fàcil de veure fent snorkel a la zona somera de la reserva.',
     ],
     onTrobar: 'Sobre les clapes de sorra entre mates de cimodocea, a poca fondària.',
+    excloure: [
+      'File:Symphodus cinereus Palamos.jpg', // exemplar a la mà, fora de l’aigua
+    ],
   },
   {
     slug: 'joell',
@@ -756,6 +768,7 @@ export const SPECIES = [
     ],
     onTrobar:
       'Sobre les llengües de sorra i grava entre barra i barra, sol o en petits grups, tot el dia.',
+    excloure: ['File:Afbeelding haringkoning.jpg'], // taula votiva pintada del segle XVII
   },
   {
     slug: 'moll-de-fang',
@@ -790,6 +803,9 @@ export const SPECIES = [
       'Freqüenta la franja de rompent i els fons sorrencs somers, i és un dels peixos que es poden veure des de la mateixa platja del Francàs sense necessitat d’anar gaire lluny.',
     ],
     onTrobar: 'A la sorra somera, entre un i vuit metres, sovint a la mateixa vora de la platja.',
+    excloure: [
+      'File:Lithognathus mormyrus, Slovenia - 20080420.jpg', // servit en un plat, damunt d’un taulell de granit
+    ],
   },
   {
     slug: 'pagell',
@@ -877,6 +893,11 @@ export const SPECIES = [
     ],
     onTrobar:
       'Enterrada a la sorra i el fang de la zona fonda. Es delata per dos ulls i una boca que no encaixen amb el fons.',
+    excloure: [
+      'File:Uranoscopus scaber 2914.jpg', // morta damunt d’una post de fusta
+      'File:Uranoscopus.jpg', // mort damunt d’unes rajoles, amb regle
+      'File:Uranoscopus head.jpg', // el cap del mateix exemplar mort
+    ],
   },
   {
     slug: 'aranya',
@@ -947,6 +968,9 @@ export const SPECIES = [
       'Quan s’espanta, desplega les pectorals com dos ventalls d’un blau intens amb el marge fosc. També produeix sons greus i audibles amb la bufeta natatòria.',
     ],
     onTrobar: 'Sobre la sorra i el fang de la zona exterior, caminant amb els radis lliures.',
+    excloure: [
+      'File:Chelidonichthys lucerna, Triglidae, Scorpaeniformes (Tub gurnard).JPG', // munt de lluernes damunt del gel, en una parada
+    ],
   },
   {
     slug: 'remol',
@@ -964,6 +988,10 @@ export const SPECIES = [
       'És un depredador emboscat que caça peixos petits, sobretot sonsos i joells. Els exemplars grossos són poc freqüents al litoral català, precisament perquè la pesca de fons els afecta molt.',
     ],
     onTrobar: 'Mig enterrat a la sorra propera a la roca, on hi ha bancs de peix petit.',
+    excloure: [
+      'File:Scophthalmus rhombus1.jpg', // làmina antiga
+      'File:34) Brill.jpg', // relleu tallat en una llosa de vorera
+    ],
   },
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -986,6 +1014,12 @@ export const SPECIES = [
     ],
     onTrobar:
       'A la franja de rompent i sobre les barres someres, sobretot a l’alba i amb mar arrissada.',
+    // Espècie d'aqüicultura: a Commons hi ha molt més llobarro de peixateria i
+    // de viver que de mar oberta.
+    excloure: [
+      'File:20121026 0597 Almada & Cacilhas 38.jpg', // taulell de peixateria
+      'File:Dicentrarchus labrax (Belgium).jpg', // exemplar mort sobre fons negre, de laboratori
+    ],
   },
   {
     slug: 'boga',
@@ -1020,6 +1054,14 @@ export const SPECIES = [
       'La sardina i el seitó són les dues espècies sobre les quals s’ha construït la pesca d’encerclament del litoral català. Dins la reserva no s’hi pesquen, però hi entren i en surten lliurement: cap reserva marina no protegeix un peix pelàgic, només l’hàbitat on s’alimenta.',
     ],
     onTrobar: 'En bancs a mitja aigua, sobretot entre desembre i abril.',
+    // A Commons hi ha molta més sardina de llauna que sardina viva, i la imatge
+    // principal de la Viquipèdia és, literalment, una llauna oberta.
+    imatge: 'File:Sardina pilchardus.jpg',
+    excloure: [
+      'File:Cuba de sardinas.jpg', // cubell de sardines assecades, en una parada
+      'File:Sardina pilchardus Italy.jpg', // exemplar mort a la mà
+      'File:Sardiña (Sardina pilchardus).jpg', // munt de sardines pescades
+    ],
   },
   {
     slug: 'seito',
@@ -1037,6 +1079,12 @@ export const SPECIES = [
       'Fresa a l’estiu en aigües costaneres com aquestes. La proximitat de la desembocadura de rieres i el fons ric del grapissar fan que la zona sigui bona per als seus alevins.',
     ],
     onTrobar: 'A mitja aigua i prop de la superfície, entre maig i setembre.',
+    excloure: [
+      'File:Engraulis encrasicolus 57044460.jpg', // mort damunt la sorra de la platja
+      'File:Engraulis encrasicolus 107259692.jpg', // mort damunt la sorra de la platja
+      'File:Engraulis encrasicolus - Marian del Pozo.jpg', // dibuix científic, no pas una fotografia
+      'File:Engraulis encrasicolus Portugal.jpg', // exemplar mort damunt la sorra molla
+    ],
   },
   {
     slug: 'sorell',
@@ -1054,6 +1102,10 @@ export const SPECIES = [
       'Va en bancs mixtos amb bogues i sardines i persegueix peix petit i crustacis. Els juvenils es refugien sovint sota objectes flotants.',
     ],
     onTrobar: 'A mitja aigua sobre les barres, sovint barrejat amb bancs de boga.',
+    excloure: [
+      'File:Jurel blanco o mediterráneo (Trachurus mediterraneus).jpeg', // exemplar mort sobre fons blanc
+      'File:Jurel mediterráneo (Trachurus mediterraneus).jpg', // exemplar mort sobre fons blanc
+    ],
   },
   {
     slug: 'agulla',
@@ -1072,6 +1124,11 @@ export const SPECIES = [
     ],
     onTrobar:
       'A la superfície, sobre qualsevol punt de la reserva. Es veu millor des de la barca que des de sota.',
+    excloure: [
+      'File:Belone belone - Garfish.jpg', // morta damunt la roca
+      'File:Belone belone Italy.jpg', // morta damunt els còdols de la platja
+      'File:Belona.JPG', // agulles pescades, arrenglerades a la platja
+    ],
   },
   {
     slug: 'espet',
@@ -1106,6 +1163,11 @@ export const SPECIES = [
       'Caça en aigües someres i entra a la rompent perseguint llisses i joells. Les seves incursions són breus i violentes, i la resta de peixos hi reaccionen abans que vosaltres l’hàgiu vist.',
     ],
     onTrobar: 'A la zona somera i a la vora de la platja, de manera imprevisible.',
+    excloure: [
+      'File:Lichia amia Tuscany.jpg', // el mateix trofeu de pesca, pujat dues vegades
+      'File:Lichia amia 1.jpg', // dins d’un aquari
+      'File:Lichia amia South Africa.jpg', // morta damunt d’un llit d’algues
+    ],
   },
   {
     slug: 'cirvia',
@@ -1180,6 +1242,7 @@ export const SPECIES = [
     ],
     onTrobar:
       'Reposant sobre la sorra i el fang de la part exterior, sobretot de nit. De dia, mig enterrat.',
+    excloure: ['File:A nice dogfish.JPG'], // exemplar dissecat damunt d’un prestatge
   },
   {
     slug: 'escursana',
@@ -1217,6 +1280,11 @@ export const SPECIES = [
       'És l’espècie de rajada més freqüent del litoral català i, alhora, una de les més castigades per la pesca d’arrossegament: creix a poc a poc i pon pocs ous. Les seves càpsules d’ou negres i rectangulars són molt fàcils de trobar a la platja.',
     ],
     onTrobar: 'Sobre els fons de sorra i fang del límit exterior de la reserva.',
+    excloure: [
+      // Tots dos fitxers estan truncats a Commons i sharp no els pot descodificar.
+      'File:Raja clavata 1.jpg',
+      'File:Raja clavata 2.jpg',
+    ],
   },
   {
     slug: 'rajada-estrellada',
@@ -1234,6 +1302,9 @@ export const SPECIES = [
       'És exclusiva del Mediterrani i prefereix fons tous poc profunds, exactament els que envolten el grapissar. Això la fa especialment dependent d’espais protegits com aquest.',
     ],
     onTrobar: 'Sobre la sorra i el fang de la corona d’amortiment.',
+    // Càpsula ovígera buida a la platja: el peu de foto només diu el binomi, i
+    // a la fitxa es llegiria com si la rajada fos aquesta bossa negra.
+    excloure: ['File:Mediterranean Starry Skate (Razza Stellata) (Raja asterias) - Rome, Italy 2024-03-01.jpg'],
   },
   {
     slug: 'mila',
@@ -1253,6 +1324,9 @@ export const SPECIES = [
     ],
     onTrobar:
       'A mitja aigua sobre les zones obertes, batent les ales lentament. Una trobada rara i memorable.',
+    excloure: [
+      'File:Myliobatis aquila Réunion.jpg', // fotografiada a la Reunió, damunt d’Acropora: no és el Mediterrani ni, probablement, l’espècie
+    ],
   },
 ];
 
