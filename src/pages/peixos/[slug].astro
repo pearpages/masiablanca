@@ -62,9 +62,9 @@ const jsonLd = {
         {s.autoria && <span class="sp__aut data">{s.autoria}</span>}
       </p>
       {
-        s.wiki.nomsPopulars.length > 0 && (
+        s.altresNoms.length > 0 && (
           <p class="sp__alies">
-            També <span>{s.wiki.nomsPopulars.join(', ')}</span>
+            També <span>{s.altresNoms.join(', ')}</span>
           </p>
         )
       }
@@ -143,6 +143,15 @@ const jsonLd = {
                 </div>
               )
             }
+            <div>
+              <dt>Per què és al catàleg</dt>
+              <dd>
+                <a class="evid" href="/fonts#procedencia" data-ev={s.evidencia}>
+                  {s.evidenciaInfo.curt}
+                </a>
+                {' '}{s.evidenciaInfo.nom}
+              </dd>
+            </div>
           </dl>
 
           <div class="fitxa__depth">

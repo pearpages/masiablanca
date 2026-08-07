@@ -186,7 +186,7 @@ export const SOURCES = [
     tipus: 'Web institucional',
     titol: 'Reserva marina de la Masia Blanca i Aula Aquàtica',
     editor: 'El Vendrell Turisme · Ajuntament del Vendrell',
-    url: 'https://www.elvendrellturisme.com/ca/reserva-marina-de-la-masia-blanca/',
+    url: 'https://www.elvendrellturisme.com/reserva-marina-de-la-masia-blanca/',
   },
   {
     key: 'costadaurada',
@@ -214,7 +214,7 @@ export const SOURCES = [
     tipus: 'Enciclopèdia',
     titol: 'Articles d’espècies de la Viquipèdia en català',
     editor: 'Viquipèdia, l’enciclopèdia lliure',
-    url: 'https://ca.wikipedia.org/wiki/Portal:Peixos',
+    url: 'https://ca.wikipedia.org/wiki/Categoria:Peixos',
     nota:
       'Els noms populars catalans de cada espècie del catàleg s’han pres dels articles ' +
       'corresponents de la Viquipèdia, enllaçats un a un des de cada fitxa. Text sota CC BY-SA 4.0.',

@@ -207,6 +207,16 @@ i[lang='la'],
   white-space: nowrap;
 }
 
+/*
+ * El filtre del catàleg amaga les fitxes amb l'atribut `hidden`, però la regla
+ * del navegador («[hidden] { display: none }») té la especificitat més baixa
+ * que hi ha i qualsevol `display` d'un component la guanya. Amb `.card` a
+ * `display: flex`, el comptador deia «1 de 69» i seguien sortint-hi les 69.
+ */
+[hidden] {
+  display: none !important;
+}
+
 /* Wide content must scroll inside itself, never the page. */
 .scroll-x {
   overflow-x: auto;

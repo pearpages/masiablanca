@@ -10,6 +10,43 @@ const FILES = import.meta.glob('../assets/peixos/**/*.jpg', {
 
 const asset = (src) => FILES[`../assets/peixos/${src}`] ?? null;
 
+/**
+ * D'on surt que aquesta espècie hi és. Amb dues-centes fitxes, la nota general
+ * de /peixos —«no és un cens»— ja no basta: el lector ha de poder distingir
+ * l'anfós, que la documentació del Ministeri anomena, del solraig, que és una
+ * possibilitat de pas.
+ */
+export const EVIDENCIA = {
+  oficial: {
+    curt: 'Citada',
+    nom: 'La documentació oficial la cita',
+    detall:
+      'La fitxa o la web del Ministeri, o l’article de la Viquipèdia sobre la reserva, anomenen ' +
+      'aquesta espècie explícitament.',
+  },
+  registrada: {
+    curt: 'Registrada',
+    nom: 'Amb registre al litoral tarragoní',
+    detall:
+      'Hi ha registres d’aquesta espècie a la base de dades OBIS dins d’una caixa que va de ' +
+      'Cambrils a Sitges. Prova que és en aquestes aigües, no que sigui dins la reserva.',
+  },
+  habitat: {
+    curt: 'Per hàbitat',
+    nom: 'Compatible amb els hàbitats de la reserva',
+    detall:
+      'Espècie pròpia dels ambients que la reserva té documentats —barres de roca biogènica, ' +
+      'herbeis i fons tous fins als 25 m— i coneguda d’aquests ambients a la costa catalana.',
+  },
+  visitant: {
+    curt: 'Visitant',
+    nom: 'Pelàgica o de pas',
+    detall:
+      'No hi resideix: és una espècie de mar obert que pot entrar-hi seguint el peix o els ' +
+      'corrents. Cap reserva marina no protegeix un peix que hi passa.',
+  },
+};
+
 const IUCN = {
   LC: { curt: 'LC', nom: 'Risc mínim', to: 0 },
   NT: { curt: 'NT', nom: 'Gairebé amenaçada', to: 1 },
@@ -19,18 +56,35 @@ const IUCN = {
   DD: { curt: 'DD', nom: 'Dades insuficients', to: -1 },
 };
 
+const fold = (s) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+
 function hydrate(entry) {
   const images = entry.images
     .map((img) => ({ ...img, asset: asset(img.src) }))
     .filter((img) => img.asset);
 
+  /**
+   * Els altres noms catalans que la Viquipèdia dóna a l'espècie, sense repetir
+   * el principal. Són el que fa que qui busqui «mero», «aladroc» o «clavellada»
+   * trobi l'anfós, el seitó i la rajada de clavells.
+   */
+  const altresNoms = [
+    ...new Map(
+      (entry.wiki?.nomsPopulars ?? [])
+        .filter((n) => fold(n) !== fold(entry.nom))
+        .map((n) => [fold(n), n]),
+    ).values(),
+  ];
+
   return {
     ...entry,
     images,
+    altresNoms,
     lead: images[0] ?? null,
     galeria: images.slice(1),
     habitatInfo: habitatById(entry.habitat),
     iucnInfo: entry.iucn ? IUCN[entry.iucn] : null,
+    evidenciaInfo: EVIDENCIA[entry.evidencia] ?? EVIDENCIA.habitat,
     url: `/peixos/${entry.slug}`,
     /** "4 – 11 m" */
     profunditatText: `${entry.profunditat[0]} – ${entry.profunditat[1]} m`,

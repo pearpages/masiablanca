@@ -122,20 +122,30 @@ function firstHref(html) {
  */
 function popularNames(extract, cientific, primary) {
   if (!extract) return [];
-  const head = extract.split(/\s*\(/)[0];
+  // Un parèntesi curt sol formar part del nom («cavallets de (la) mar»); el
+  // que tanca la llista és el del binomi. Es treuen els curts abans de tallar.
+  const head = extract
+    .replace(/\s*\(([^)]{1,12})\)\s*/g, ' ')
+    .split(/\s*\(/)[0]
+    // "…, entre altres denominacions populars és una espècie…": el que ve
+    // després de la fórmula no són noms, són el cos de l'article.
+    .split(/,?\s+(?:entre\s+altres|és\s+un|és\s+una|són\s+un|són\s+una)\b/i)[0];
   if (!head || head.length > 320) return [];
   if (head.toLowerCase().includes(cientific.toLowerCase())) return [];
 
   const seen = new Set([primary?.toLowerCase()]);
   return head
-    .replace(/\s*\([^)]*\)\s*/g, ' ')
     .split(/,|\so\s|\si\s|\//i)
     .map((s) =>
       s
         .trim()
         // "també conegut com a X", "també anomenada X", "dit X"…
-        .replace(/^(i\s+)?(també\s+)?(és\s+)?(conegut|coneguda|coneguts|conegudes|anomenat|anomenada|anomenats|anomenades|dit|dita)\s+(com\s+a\s+|com\s+)?/i, '')
-        .replace(/^(el|la|l’|l'|els|les|un|una|en|na)\s*/i, '')
+        .replace(/^(i\s+)?(també\s+)?(és\s+)?(conegut|coneguda|coneguts|conegudes|anomenat|anomenada|anomenats|anomenades|dits|dites|dit|dita)\s+(com\s+a\s+|com\s+)?/i, '')
+        // Els articles, de més llarg a més curt: amb "el" al davant, "els
+        // cavalls" es quedava en "s cavalls". I amb \s* en comptes de \s+,
+        // "entre altres" es quedava en "tre altres".
+        .replace(/^(els|les|una|un|la|el|na|en)\s+/i, '')
+        .replace(/^(l’|l')\s*/i, '')
         .replace(/[.;:]+$/, '')
         .trim(),
     )
@@ -203,6 +213,11 @@ const DISQUALIFY = [
   /canned|tinned|\bcan of\b|\btin of\b|\bconserv[ae]s?\b|conservera|llauna|\blata\b|boite de|eingelegt|marinat|marinad|pickled|smoked|ahumad|\bfume|salted|salting|salazon|salao|escabetx|escabech|\bbait\b|\besca\b/i,
   /\bfried\b|\bfrying\b|frit[oa]s?\b|fregit|\bbrasa|barbacoa|barbecue|\basad[oa]s?\b|assad[oa]s?\b|grelhad|graellad|\bplancha\b|planxa\b|\bhorno\b|\bforn\b|roasted|boiled|hervid|bullit/i,
   /museum|musee|museo|\bmuseu\b|specimen|skelet|squelett|esquelet|esqueleto|otolith|parasit|dissect|preserved|formalin|jar\b|taxiderm|mnhn|naturkunde|natural history|collection de/i,
+  // Codis de col·lecció i de campanya que identifiquen una fotografia
+  // d'exemplar de referència: Smithsonian, FDA, SERC, FSBC.
+  /\busnm[- ]?\d|\bfda[ _-]?\d{2,}|\bfda\)|\bserc\b|\bfsbc\b|\bcatalog(ue)? no/i,
+  // Peix mort en massa, deixalles, i el peix com a motiu artístic.
+  /\bmoria\b|\bwaste\b|\bmeat\b|\bin art\b|fish kill|die-?off/i,
   // Research-survey deck shots: a fish on a measuring board is not the sea.
   /measuring board|on deck|prelevement|echantillon|sampling|acoustic response|acoustique|research (survey|cruise)|cend\d|\bstn \d|survey photo|by-?catch/i,
   /stomach|stomacal|estomac|gut content|contenu|viscer|entrail|autops|necrops|larva|larve|\begg[s]?\b|ou[s]? de|œuf|oeuf|huevos? de|egg ?case|mermaid'?s purse|ootheca|capsula/i,
@@ -213,21 +228,55 @@ const DISQUALIFY = [
   // Out of the water for good: stranded, discarded, or washed up.
   /discard|washed ashore|washed up|stranded|beached|on the beach|a la platja|carcass|carcaca|cadaver|remains of/i,
   // No bare "park"/"parque": «Parque natural da Arrábida» is open sea, not a zoo.
-  /aquarium|aquaria|acuario|aquarien|akvari|\baquari|acquari|acqmilano|ecomare|sea ?life|sea ?world|marine world|oceanari|oceanogr|oceanopolis|nausicaa|marineland|loro ?parque|\bzoo\b|captiv|\btank\b|vivarium|wildlife park|animal park|theme park|havsparken/i,
+  // «886 Cannery Row, Monterey» és l'adreça postal de l'aquari de Monterey
+  // Bay: hi ha desenes de fotos d'iNaturalist preses allà dins que no diuen
+  // «aquarium» enlloc.
+  /aquarium|aquaria|acuario|aquarien|akvari|\baquari|acquari|acqmilano|ecomare|sea ?life|sea ?world|marine world|oceanari|oceanogr|oceanopolis|nausicaa|marineland|loro ?parque|cannery row|\bzoo\b|captiv|\btank\b|vivarium|wildlife park|animal park|theme park|havsparken/i,
   /festival|matsuri|parade|carnival|statue|sculpture|monument|mural|graffiti|coat of arms|logo|stamp|coin|banknote|first day cover|philatel|postcard|poster/i,
   // Another animal is the subject and our fish is the prey.
   /\bsnake\b|natrix|serpent|heron|cormorant|gull\b|otter|octopus eating|predation|\beating\b|\bprey\b|being eaten/i,
-  /\bmap\b|distribution|chart|diagram|graph\b|infographic/i,
+  // «rangemap» va colar-se dues vegades perquè \bmap\b demana un límit de
+  // paraula que «rangemap» no té, i «Prionace glauca dis.png» perquè ningú no
+  // escriu «distribution» sencer al nom del fitxer.
+  /\bmap\b|rangemap|range ?map|\brange of the\b|\bdis\.(png|jpe?g|svg)|distribution|chart|diagram|graph\b|infographic/i,
+  // Làmines d'identificació amb la anatomia retolada. La sèrie romanesa de
+  // Commons («…, ro.jpg») és la que se'n cola més: el text va sense accents
+  // perquè fold() ja els ha tret.
+  /inotatoare|linia laterala|radii moi|\bsolzi\b/i,
+  // Microscòpia electrònica de dentículs dèrmics: als taurons, la meitat de
+  // les fotos «bones» de Commons són plaques de pell a 500 µm.
+  /denticle|denticul|\bsem\b|micrograf|electron microsc|\bum\b scale|scale bar/i,
+  // Peces soltes: una dent, una mandíbula, una espina en una vitrina.
+  /dentition of|\bzahn\b|\btooth\b|\bjaws?\b|back spine|mandibul|\bdiente\b|\bdent de\b/i,
+  // Ports pesquers i llotges: el peix hi és sencer i mort, i el peu de foto
+  // sovint només diu el binomi i el topònim.
+  /pesqueir|puerto pesquero|port de peche|fishing port|landing site|\bwharf\b/i,
+  // Campanyes de marcatge i de mostreig, i peix a l'ham.
+  /researchers? (study|studying|measur|sampl|tag)|\bhooked\b|\btagged\b|\btagging\b/i,
+  // Sèries fotogràfiques senceres que són sempre el mateix: les plaques de
+  // pell de J. Guallart i les cobertes dels vaixells de campanya pesquera.
+  // «NOAA» sol, no: la seva fototeca també té les fotos submarines dels
+  // santuaris marins, que són de les millors que hi ha a Commons.
+  /jguallart|\bnmfs\b|\bnefsc\b/i,
+  // Escanejos de làmines de biblioteca.
+  /\bnypl\b|biodiversity heritage|\bplanche\b|zoologie\./i,
   // A Commons taxon category also collects pure science: a protein first
   // described from this species ends up filed under its name.
   /\bfigure \d|\b10\.\d{4}[-/]|molecular structure|crystal structure|cartoon representation|\bprotein\b|\bpdb\b|amino acid|sequence align/i,
+  // Identificadors de figura d'article i imatges d'instrumental.
+  /\bpone\.\d|\bpbio\.\d|\bg\d{3}\.png|\bxrf\b|\bx-?ray\b|radiograph|inner structure|internal anatomy/i,
+  // Pesca esportiva: el peix hi és viu o acabat de treure, però hi és per haver picat.
+  /\bfished\b|sport ?fish|\bjigging\b|\bangling\b|\btrolling\b|\bcatch of\b/i,
   /fish ?farm|aquacultur|piscicultur|hatchery|net pen|trawl|chalut|arrossegament/i,
 ];
 
 const PREFER = [/underwater|in situ|snorkel|scuba|diving|\breef\b|posidoni|seagrass|natural habitat/i];
 
+// L'any sol, per datar una làmina antiga — però NO quan ve just darrere d'una
+// coma, que és com s'escriu l'autoria taxonòmica. «Tripterygion melanurus
+// Guichenot, 1850 - femelle.jpg» és una fotografia, i es donava per gravat.
 const ARCHAIC =
-  /\b1[6-9]\d{2}\b|lithograph|gravure|engraving|illustrat|drawing|plate \d|\bpl\.? ?\d{1,3}\b|\bfig\.? ?\d|swainson|couch|gervais|fmib|bloch|cuvier's|histoire naturelle|history of the fishes|painting|schilderij/i;
+  /(?<!,\s)\b1[6-9]\d{2}\b|lithograph|gravure|engraving|illustrat|drawing|plate \d|\bpl\.? ?\d{1,3}\b|\bfig\.? ?\d|swainson|couch|gervais|fmib|bloch|cuvier's|histoire naturelle|history of the fishes|painting|schilderij/i;
 
 /**
  * Every filter matches text with the diacritics folded away. Otherwise

@@ -2,8 +2,13 @@
 import Base from '../../layouts/Base.astro';
 import SpeciesCard from '../../components/SpeciesCard.astro';
 import { SITE } from '../../lib/site.js';
-import { ALL, GROUPED } from '../../lib/species.js';
+import { ALL, GROUPED, EVIDENCIA } from '../../lib/species.js';
 import '../../styles/catalog.css';
+
+const EV_ORDRE = ['oficial', 'registrada', 'habitat', 'visitant'];
+const EV_COMPTE = Object.fromEntries(
+  EV_ORDRE.map((k) => [k, ALL.filter((s) => s.evidencia === k).length]),
+);
 
 const description =
   `Catàleg il·lustrat de ${ALL.length} espècies de peixos que es poden trobar a la reserva marina ` +
@@ -46,9 +51,10 @@ const jsonLd = {
       <p class="cat-head__nota">
         No és un cens. No hi ha cap inventari científic públic de la ictiofauna d’aquesta reserva
         en concret: el catàleg s’ha construït a partir dels hàbitats que hi ha documentats i de
-        la fauna coneguda d’aquests hàbitats a la costa catalana. Les espècies que les fonts
-        oficials citen explícitament hi estan
-        <a href="/fonts">marcades a la pàgina de fonts</a>.
+        la fauna coneguda d’aquests hàbitats a la costa catalana. Per això cada fitxa diu d’on
+        surt —si la cita la documentació oficial, si en tenim registres al litoral tarragoní, si
+        hi és per l’hàbitat o si només hi passa— i el catàleg es pot filtrar per aquest criteri.
+        <a href="/fonts#procedencia">Els quatre nivells, explicats a la pàgina de fonts</a>.
       </p>
     </div>
   </header>
@@ -78,6 +84,18 @@ const jsonLd = {
             style={`--key:${g.color}`}
           >
             {g.curt} <span class="data">{g.species.length}</span>
+          </button>
+        ))
+      }
+    </div>
+    <div class="filters__habitats" role="group" aria-label="Filtra per procedència">
+      <button type="button" class="chip is-on" data-ev="all" aria-pressed="true">
+        Tota procedència
+      </button>
+      {
+        EV_ORDRE.map((k) => (
+          <button type="button" class="chip" data-ev={k} aria-pressed="false" title={EVIDENCIA[k].detall}>
+            {EVIDENCIA[k].curt} <span class="data">{EV_COMPTE[k]}</span>
           </button>
         ))
       }
@@ -114,6 +132,7 @@ const jsonLd = {
   if (root) {
     const search = root.querySelector('[data-search]') as HTMLInputElement;
     const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const evChips = [...root.querySelectorAll<HTMLButtonElement>('[data-ev]')];
     const counter = root.querySelector('[data-count]');
     const empty = document.querySelector('[data-empty]') as HTMLElement | null;
     const cards = [...document.querySelectorAll<HTMLElement>('.card')];
@@ -121,6 +140,7 @@ const jsonLd = {
     const total = cards.length;
 
     let habitat = 'all';
+    let evidencia = 'all';
     let query = '';
 
     const strip = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -131,9 +151,10 @@ const jsonLd = {
 
       for (const card of cards) {
         const okHabitat = habitat === 'all' || card.dataset.habitat === habitat;
-        const hay = strip(`${card.dataset.nom} ${card.dataset.sci}`);
+        const hay = strip(`${card.dataset.nom} ${card.dataset.sci} ${card.dataset.noms ?? ''}`);
         const okQuery = q === '' || hay.includes(q);
-        const on = okHabitat && okQuery;
+        const okEv = evidencia === 'all' || card.dataset.ev === evidencia;
+        const on = okHabitat && okQuery && okEv;
         card.hidden = !on;
         if (on) shown++;
       }
@@ -162,6 +183,18 @@ const jsonLd = {
       });
     }
 
+    for (const chip of evChips) {
+      chip.addEventListener('click', () => {
+        evidencia = chip.dataset.ev ?? 'all';
+        for (const c of evChips) {
+          const on = c === chip;
+          c.classList.toggle('is-on', on);
+          c.setAttribute('aria-pressed', String(on));
+        }
+        apply();
+      });
+    }
+
     search?.addEventListener('input', () => {
       query = search.value;
       apply();
@@ -170,11 +203,14 @@ const jsonLd = {
     document.querySelector('[data-reset]')?.addEventListener('click', () => {
       query = '';
       habitat = 'all';
+      evidencia = 'all';
       if (search) search.value = '';
-      chips.forEach((c, i) => {
-        c.classList.toggle('is-on', i === 0);
-        c.setAttribute('aria-pressed', String(i === 0));
-      });
+      for (const set of [chips, evChips]) {
+        set.forEach((c, i) => {
+          c.classList.toggle('is-on', i === 0);
+          c.setAttribute('aria-pressed', String(i === 0));
+        });
+      }
       apply();
     });
 

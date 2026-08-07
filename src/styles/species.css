@@ -247,3 +247,36 @@
   margin-block-start: var(--sp-l);
   font-size: var(--step--1);
 }
+
+/*
+ * Distintiu de procedència. Fa joc amb el de la UICN però amb la paleta del
+ * lloc, no amb la de l'alarma: aquí no s'informa de cap risc, sinó de fins on
+ * arriba el que sabem.
+ */
+.evid {
+  display: inline-block;
+  padding: 0.05rem 0.32rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--c-white);
+  background-color: var(--text-muted);
+  text-decoration: none;
+}
+
+.evid:hover {
+  text-decoration: underline;
+}
+
+.evid[data-ev='oficial'] {
+  background-color: var(--c-corallina-deep);
+}
+
+.evid[data-ev='registrada'] {
+  background-color: var(--c-posidonia);
+}
+
+.evid[data-ev='visitant'] {
+  background-color: var(--c-turbid);
+}

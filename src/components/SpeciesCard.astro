@@ -5,7 +5,7 @@ import DepthBand from './DepthBand.astro';
 const { species: s, eager = false } = Astro.props;
 ---
 
-<article class="card" data-habitat={s.habitat} data-nom={s.nom.toLowerCase()} data-sci={s.cientific.toLowerCase()} data-iucn={s.iucn ?? ''}>
+<article class="card" data-habitat={s.habitat} data-nom={s.nom.toLowerCase()} data-sci={s.cientific.toLowerCase()} data-noms={s.altresNoms.join(' ').toLowerCase()} data-iucn={s.iucn ?? ''} data-ev={s.evidencia}>
   <a class="card__hit" href={s.url}>
     <span class="visually-hidden">{s.nom}</span>
   </a>

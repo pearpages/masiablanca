@@ -1,9 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
 import { SOURCES, FACTS } from '../lib/site.js';
-import { ALL } from '../lib/species.js';
+import { ALL, EVIDENCIA } from '../lib/species.js';
 import '../styles/article.css';
 import '../styles/fonts-page.css';
+import '../styles/species.css';
+
+const EV_ORDRE = ['oficial', 'registrada', 'habitat', 'visitant'];
+const PER_EVIDENCIA = Object.fromEntries(
+  EV_ORDRE.map((k) => [k, ALL.filter((s) => s.evidencia === k)]),
+);
 
 const description =
   'Totes les fonts utilitzades per escriure aquest lloc: les ordres del BOE, la documentació ' +
@@ -109,15 +115,32 @@ const CITADES = [
       </div>
     </section>
 
-    <section class="citades">
-      <h2>Espècies que les fonts oficials citen expressament</h2>
+    <section class="citades" id="procedencia">
+      <h2>D’on surt cada espècie del catàleg</h2>
       <p class="citades__lede">
-        La resta del catàleg s’ha construït a partir dels hàbitats documentats de la reserva
+        Les {ALL.length} fitxes no valen totes el mateix com a prova. Onze surten anomenades a la
+        documentació oficial; d’unes quantes més hi ha registres a les bases de dades del litoral
+        tarragoní; la resta hi són perquè són pròpies dels hàbitats que la reserva té documentats
         — barres de roca biogènica entre {FACTS.barresMin} i {FACTS.barresMax} m, herbeis de
-        posidònia i cimodocea, i fons de sorra i fang fins als {FACTS.fondariaMax} m — i de la
-        ictiofauna coneguda d’aquests hàbitats a la costa catalana. És una llista d’espècies
-        <strong> que s’hi poden trobar</strong>, no el resultat d’un cens.
+        posidònia i cimodocea, i fons de sorra i fang fins als {FACTS.fondariaMax} m. Cada fitxa
+        diu de quin grup és, i el catàleg es pot filtrar per aquest criteri.
       </p>
+      <dl class="procedencia">
+        {
+          EV_ORDRE.map((k) => (
+            <div class="procedencia__grup">
+              <dt>
+                <span class="evid" data-ev={k}>{EVIDENCIA[k].curt}</span>
+                {' '}{EVIDENCIA[k].nom}
+                <span class="data procedencia__n">{PER_EVIDENCIA[k].length}</span>
+              </dt>
+              <dd>{EVIDENCIA[k].detall}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <h3 class="citades__sub">Les onze que la documentació oficial anomena</h3>
       <ul class="citades__list">
         {
           CITADES.map((c) => (
@@ -131,7 +154,11 @@ const CITADES = [
       <p class="citades__nota">
         La documentació oficial fa servir noms castellans genèrics («serranos», «escorpénidos»,
         «agujas») que corresponen a més d’una espècie; aquí s’han assignat a l’espècie més
-        probable per a aquests fons.
+        probable per a aquests fons. Els registres de la categoria «registrada» surten d’una
+        consulta a OBIS sobre una caixa que va de Cambrils a Sitges i que inclou fons
+        d’arrossegament de més de 400 m: proven que l’espècie és en aquestes aigües, no que sigui
+        dins la reserva. Segueix sense haver-hi cap inventari científic públic de la ictiofauna
+        d’aquesta reserva en concret.
       </p>
     </section>
 

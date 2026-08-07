@@ -158,3 +158,40 @@
 .metode li + li {
   margin-block-start: var(--sp-2xs);
 }
+
+/* Els quatre nivells de procedència, a /fonts#procedencia. */
+.procedencia {
+  margin-block: var(--sp-m);
+  display: grid;
+  gap: var(--sp-s);
+}
+
+.procedencia__grup {
+  border-inline-start: 2px solid var(--rule);
+  padding-inline-start: var(--sp-s);
+}
+
+.procedencia dt {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5ch;
+  flex-wrap: wrap;
+  font-weight: 500;
+}
+
+.procedencia__n {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.procedencia dd {
+  margin-block-start: 0.2rem;
+  color: var(--text-muted);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  max-width: 62ch;
+}
+
+.citades__sub {
+  margin-block-start: var(--sp-m);
+}
