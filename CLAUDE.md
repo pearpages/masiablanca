@@ -33,6 +33,8 @@ El toolchain el fixa `mise.toml` (node 24.16.0, pnpm 11.15.0). No hi ha instal·
 - **Res d'estils en línia.** Cap `style={{…}}`, cap CSS-in-JS. Els tokens són a
   `src/styles/tokens.css`; cada component té el seu `.css` al costat i s'importa des del `.astro`.
   L'única excepció admesa és `style={\`--key:…\`}` per passar una variable CSS d'hàbitat.
+  L'única excepció a la regla del `.css` germà és `@pearpages/credit`, que porta el seu propi
+  full d'estils des de `node_modules` — vegeu el crèdit d'autoria, més avall.
 - **Cap imatge sense atribució.** `Figure.astro` incorpora `Credit.astro`: no hi ha manera de
   publicar una foto sense el crèdit. `scripts/check-build.mjs` ho verifica i fa fallar el
   desplegament si en falta cap.
@@ -41,9 +43,15 @@ El toolchain el fixa `mise.toml` (node 24.16.0, pnpm 11.15.0). No hi ha instal·
 - **Les xifres tenen font.** Tot el que és una dada dura viu a `src/lib/site.js` (`FACTS`,
   `CENTRE`, `SOURCES`), i les discrepàncies entre fonts es documenten a `/fonts` en comptes de
   triar-ne una en silenci.
-- **El peu porta el crèdit d'autoria.** `.colophon__author`, amb la icona
-  `public/pearpages-icon.png` i l'enllaç a `pearpages.com`, és el mateix crèdit que porten tots
-  els llocs de pearpages. No s'ha de perdre en cap refactor del colofó.
+- **El peu porta el crèdit d'autoria.** El serveix el paquet `@pearpages/credit`, importat a
+  `SiteFooter.astro` com a `AuthorCredit` (el nom `Credit` ja el té el crèdit fotogràfic) i
+  renderitzat amb `as="div"`, perquè va dins del `<footer>` que ja hi ha i un `<footer>` niat
+  seria un segon `contentinfo`. És el mateix crèdit que porten tots els llocs de pearpages i no
+  s'ha de tornar a escriure a mà: ni marcatge, ni CSS, ni còpia de la icona (la pera viatja dins
+  del full d'estils del paquet com a data URI). L'única cosa local és el tema, dues variables a
+  `.colophon`: `--sk-ink-soft: var(--text-muted)` i `--sk-accent: var(--accent)`. Van a
+  `.colophon` i no a `:root` perquè `.submerged` redefineix aquests tokens per secció, i un
+  àlies declarat al `:root` s'hi resoldria i quedaria congelat al registre clar.
 
 ## Estructura
 

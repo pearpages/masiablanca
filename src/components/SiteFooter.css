@@ -3,6 +3,12 @@
   padding-block: var(--sp-xl) var(--sp-l);
   background-color: var(--bg-alt);
   border-block-start: 1px solid var(--rule);
+
+  /* Tema del crèdit de @pearpages/credit: les dues úniques variables que exposa.
+     Va aquí i no a :root perquè .submerged redefineix aquests tokens per secció, i
+     un àlies declarat al :root se n'hi resoldria i quedaria congelat al registre clar. */
+  --sk-ink-soft: var(--text-muted);
+  --sk-accent: var(--accent);
 }
 
 .colophon__inner {
@@ -17,7 +23,7 @@
   }
 
   .colophon__legal,
-  .colophon__author {
+  .sk-author {
     grid-column: 1 / -1;
   }
 }
@@ -72,29 +78,5 @@
   max-width: 78ch;
 }
 
-/* Crèdit d'autoria, comú a tots els llocs de pearpages. */
-.colophon__author {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2xs);
-  margin-block-start: var(--sp-m);
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
-}
-
-.colophon__author img {
-  flex: none;
-  width: 16px;
-  height: 16px;
-}
-
-.colophon__author a {
-  color: var(--text);
-  text-decoration-color: var(--rule-strong);
-}
-
-.colophon__author a:hover {
-  color: var(--accent);
-}
+/* El crèdit d'autoria (.sk-author) el serveix @pearpages/credit amb el seu propi full
+   d'estils. Aquí només es col·loca a la graella; l'aparença és la canònica del paquet. */

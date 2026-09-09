@@ -1,3 +1,5 @@
 allowBuilds:
   esbuild: true
   sharp: true
+minimumReleaseAgeExclude:
+  - '@pearpages/credit@0.1.0'

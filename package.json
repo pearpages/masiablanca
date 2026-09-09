@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",
+    "@pearpages/credit": "^0.1.0",
     "astro": "^5.16.0",
     "sharp": "^0.34.4"
   }
