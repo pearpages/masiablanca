@@ -124,7 +124,45 @@ lloc i el comprovador falla si el canonical no hi coincideix.
 
 ## Estat
 
-Fet: tot l'anterior. 207 pàgines, 199 espècies, 616 fotografies, `pnpm check` en verd.
+Fet: tot l'anterior. 207 pàgines, 199 espècies, 616 fotografies, `pnpm check` en verd. Desplegat i
+viu a `masiablanca.soms.cat` des del 6 d'agost del 2026, amb el DNS i l'HTTPS ja configurats.
+
+**Les URL porten barra final, i no és opcional.** Amb `build.format: 'directory'` cada pàgina és
+`<ruta>/index.html`, i un servidor amb semàntica de directori respon 301 de `<ruta>` cap a
+`<ruta>/`. El motiu de fons no és una manía del servidor: el navegador resol els enllaços relatius
+contra la URL de la barra d'adreces, de manera que un `href="anfos"` va a `/anfos` des de
+`/credits` i a `/credits/anfos` des de `/credits/`. Són pàgines diferents, així que el servidor ha
+de triar una forma canònica i redirigir l'altra.
+
+El projecte va néixer amb `trailingSlash: 'never'`, que no és una descripció sinó una ordre: «escriu
+les URL sense barra». Astro obeïa i GitHub Pages no se n'assabentava, de manera que **les 206
+canòniques, els 206 `<loc>` del sitemap i tots els enllaços interns apuntaven a l'origen d'un 301**.
+El sitemap —l'únic canal de descobriment del lloc— era una llista de 206 redireccions, que és el
+que Search Console classifica com «Pàgina amb redirecció» i no indexa.
+
+Ara és `trailingSlash: 'ignore'`, el defecte d'Astro. Amb `format: 'directory'` és la **mateixa
+branca de codi** que `'always'` —tant a `core/build/util.js` (`shouldAppendForwardSlash`) com a
+`@astrojs/sitemap/dist/index.js:76-79`—, i s'ha comprovat que la sortida és idèntica byte a byte.
+L'únic que canviaria amb `'always'` és que `astro preview` respondria 404 a la forma sense barra.
+
+Tres coses que cal saber abans de tocar-ho:
+
+- **El config no ho arregla sol.** `Seo.astro` tornava a escapçar la barra a mà una línia més avall,
+  i els `href` són text escrit al marcatge. Són tres llocs: el config, `Seo.astro`, i els enllaços
+  de `site.js`, `species.js`, els `crumbs` i les pàgines.
+- **No es dedueix del proveïdor.** Es va mesurar: GitHub Pages, Netlify i Cloudflare Pages
+  redirigeixen cap a la forma **amb** barra; Vercel, cap a la de **sense**. Tots redirigeixen; només
+  canvia quina forma consideren bona, i a tots és configurable. La regla és mesurar-ho amb `curl`,
+  no suposar-ho.
+- **`build.format: 'file'` no és l'alternativa.** Provat: deixa la canònica en `/historia.html`
+  mentre el sitemap segueix dient `/historia`, i genera `dist/peixos/` sense `index.html`, o sigui
+  `/peixos/` convertit en un 404 dur.
+
+`check-build.mjs` no ho detectava perquè normalitzava la barra final abans de comparar, als dos
+costats: esborrava justament la distinció que havia de vigilar. Ara llegeix `astro.config.mjs` de
+debò en comptes de tenir-ne una còpia del domini, i compara la canònica, l'`og:url`, cada enllaç
+intern i cada `<loc>` amb la URL on la pàgina es publica realment. Comprovat que hi peta: tornar a
+posar `'never'` dona 825 errors.
 
 **El catàleg s'ha ampliat de 69 a 199 espècies** (agost del 2026), per tandes d'hàbitat: rajades
 i taurons 6 → 20, praderies 10 → 21, grapissar rocós 29 → 63, columna d'aigua 10 → 39, fons de
@@ -175,8 +213,19 @@ manera que per a les espècies comestibles el peix viu no hi entrava mai. Ara el
 porten el binomi al títol passen al davant.
 
 Pendent:
-- Crear el remot de GitHub, configurar el DNS i fer el primer desplegament.
-- Comprovar Lighthouse contra el domini real un cop publicat.
+- **Search Console**: comprovar si `soms.cat` hi és com a *propietat de domini* (el TXT
+  `google-site-verification` ja és a la zona) — si ho és, ja cobreix el subdomini. Demanar la
+  indexació de la portada i enviar-hi el sitemap, un cop desplegada la correcció de les URL.
+- **SEO de contingut**, mesurat i encara sense fer: les 199 meta descriptions fan 234–313 caràcters
+  i Google en mostra ~155, de manera que el tros que es talla és sempre el geogràfic; cap dels 206
+  H1 conté «reserva marina» ni «Masia Blanca» (el de `/peixos` és «Què hi ha, exactament»);
+  `/visitar` té 544 paraules i és la pàgina de més intenció de cerca; la tira «Al mateix ambient»
+  copia literalment el resum de tres altres fitxes (115–130 de ~500 paraules) i ~417 imatges
+  comparteixen `alt` amb una germana de la mateixa pàgina, tot i que
+  `src/data/species.generated.json` ja porta una descripció per imatge que no es fa servir.
+- Higiene: `<link rel="preconnect" href="/">` a `Base.astro:48` no fa res, i `lang="ca"` és escrit a
+  mà a la línia 37 en comptes de llegir `SITE.lang`.
+- Comprovar Lighthouse contra el domini real.
 - **Quatre fitxes es queden sense cap fotografia**, perquè a Commons no n'hi ha cap de
   publicable: la **mussola vera** (27 candidates: aquaris, un plat cuinat, làmines, un mapa,
   congèneres i una dissecció), l'**angelina** (4: dues captures, una peixateria i un mapa), el

@@ -2,6 +2,8 @@
  * Post-build integrity check over dist/. Runs in CI and fails the deploy.
  *
  * What it guarantees:
+ *   · every canonical, every <loc> and every internal link is the URL the page
+ *     is actually served at — not one that redirects to it
  *   · every internal link resolves to a real page or file
  *   · every page has a unique title, a description and a canonical URL
  *   · every <img> has non-empty alt text
@@ -16,14 +18,35 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
-const SITE = 'https://masiablanca.soms.cat';
 
 const errors = [];
 const fail = (msg) => errors.push(msg);
+
+// El config real, no una còpia: així el comprovador no pot discrepar mai de la
+// compilació sobre on es publica cada pàgina.
+const { default: astroConfig } = await import(
+  pathToFileURL(path.join(ROOT, 'astro.config.mjs')).href
+);
+// Els defectes són els d'Astro (schemas/base.js), per si algun dia s'omet la clau.
+const SITE = (astroConfig.site ?? '').replace(/\/$/, '');
+const FORMAT = astroConfig.build?.format ?? 'directory';
+const TRAILING = astroConfig.trailingSlash ?? 'ignore';
+if (!SITE) fail('astro.config.mjs: falta `site`, i sense ell no hi ha canòniques ni sitemap');
+
+// GitHub Pages té semàntica de directori: amb format 'directory' cada pàgina és
+// <ruta>/index.html i es publica a <ruta>/, responent 301 a <ruta> sense barra.
+// Amb trailingSlash 'never' tot el lloc s'enllaçaria a l'origen d'aquell
+// redirect i el sitemap seria una llista de redireccions.
+if (FORMAT === 'directory' && TRAILING === 'never') {
+  fail(
+    "astro.config.mjs: build.format 'directory' amb trailingSlash 'never' — " +
+      "cada URL publicada redirigeix. Ha de ser 'ignore' (el defecte) o 'always'.",
+  );
+}
 
 async function walk(dir) {
   const out = [];
@@ -42,17 +65,29 @@ if (!existsSync(DIST)) {
 
 const files = await walk(DIST);
 const pages = files.filter((f) => f.endsWith('.html'));
-const rel = (f) => `/${path.relative(DIST, f).replace(/\/?index\.html$/, '').replace(/\.html$/, '')}`;
+
+/**
+ * La URL on un fitxer de dist/ es publica realment — l'única que no redirigeix
+ * mai. És la referència de la canònica, del sitemap i de cada href. Aquí NO
+ * s'ha de normalitzar la barra final: la barra és justament el que es comprova.
+ */
+const served = (f) => {
+  const r = path.relative(DIST, f);
+  if (r === 'index.html') return '/';
+  if (r === '404.html') return '/404'; // pàgina d'estat: plana i a l'arrel
+  if (FORMAT === 'file') return `/${r.replace(/\.html$/, '')}`;
+  return `/${r.replace(/index\.html$/, '')}`; // peixos/index.html → /peixos/
+};
 
 const titles = new Map();
-const linkTargets = new Set(files.map((f) => rel(f)));
-for (const f of files) linkTargets.add(`/${path.relative(DIST, f)}`);
+const servedPages = new Set(pages.map(served));
+const assets = new Set(files.map((f) => `/${path.relative(DIST, f)}`));
 
 let imgCount = 0;
 let creditCount = 0;
 
 for (const file of pages) {
-  const url = rel(file) || '/';
+  const url = served(file);
   const html = await readFile(file, 'utf8');
 
   // ---- head -------------------------------------------------------------
@@ -65,9 +100,19 @@ for (const file of pages) {
   if (!desc || desc.length < 50) fail(`${url}: meta description absent o massa curta`);
   if (desc && desc.length > 320) fail(`${url}: meta description massa llarga (${desc.length})`);
 
+  // La canònica ha de ser EXACTAMENT la URL on es publica la pàgina. Comparar-la
+  // normalitzant la barra final és el que va deixar passar que tot el lloc es
+  // canonicalitzés cap a un 301.
   const canonical = /<link rel="canonical" href="([^"]*)"/.exec(html)?.[1];
-  if (!canonical) fail(`${url}: sense canonical`);
-  else if (!canonical.startsWith(SITE)) fail(`${url}: canonical fora del domini — ${canonical}`);
+  if (url === '/404') {
+    if (canonical) fail('/404: una pàgina noindex no ha de portar canonical');
+  } else if (!canonical) fail(`${url}: sense canonical`);
+  else if (canonical !== `${SITE}${url}`) {
+    fail(`${url}: canonical ${canonical} ≠ la URL publicada (${SITE}${url}) — hi ha un 301 pel mig`);
+  }
+
+  const ogUrl = /<meta property="og:url" content="([^"]*)"/.exec(html)?.[1];
+  if (url !== '/404' && ogUrl !== `${SITE}${url}`) fail(`${url}: og:url ${ogUrl} ≠ la URL publicada`);
 
   if (!/<html lang="ca">/.test(html)) fail(`${url}: <html> sense lang="ca"`);
 
@@ -106,10 +151,17 @@ for (const file of pages) {
   }
 
   // ---- internal links ---------------------------------------------------
+  // Sense normalitzar la barra: un enllaç a una pàgina que existeix amb una
+  // altra forma no està trencat, però faria un 301, i cal dir-ho així o es
+  // llegeix malament l'error.
   for (const m of html.matchAll(/href="(\/[^"#?]*)/g)) {
-    const target = m[1].replace(/\/$/, '') || '/';
+    const target = m[1];
     if (target.startsWith('/_astro/')) continue;
-    if (!linkTargets.has(target) && !existsSync(path.join(DIST, target))) {
+    if (assets.has(target) || servedPages.has(target)) continue;
+    const bare = target.replace(/\/$/, '');
+    if (servedPages.has(bare) || servedPages.has(`${bare}/`)) {
+      fail(`${url}: ${target} existeix, però la URL publicada és una altra — l'enllaç faria un 301`);
+    } else {
       fail(`${url}: enllaç trencat cap a ${target}`);
     }
   }
@@ -119,12 +171,18 @@ for (const file of pages) {
 const sitemapFile = files.find((f) => /sitemap-\d+\.xml$/.test(f));
 if (!sitemapFile) fail('no s’ha generat cap sitemap-N.xml');
 else {
+  // Coincidència exacta i en els DOS sentits. El sentit invers és el que hauria
+  // detectat a la primera que el sitemap llistava URL que redirigeixen.
   const xml = await readFile(sitemapFile, 'utf8');
-  const locs = new Set([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace(/\/$/, '')));
-  for (const [, url] of titles) {
-    if (url === '/404') continue;
-    const full = `${SITE}${url === '/' ? '' : url}`;
-    if (!locs.has(full)) fail(`sitemap: hi falta ${full}`);
+  const locs = new Set([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]));
+  const indexable = [...servedPages].filter((u) => u !== '/404');
+  for (const u of indexable) {
+    if (!locs.has(`${SITE}${u}`)) fail(`sitemap: hi falta ${SITE}${u}`);
+  }
+  for (const l of locs) {
+    if (!l.startsWith(SITE) || !indexable.includes(l.slice(SITE.length))) {
+      fail(`sitemap: ${l} no és cap pàgina publicada`);
+    }
   }
 }
 

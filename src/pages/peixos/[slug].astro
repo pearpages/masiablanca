@@ -44,7 +44,7 @@ const jsonLd = {
   imageAlt={s.altText}
   type="article"
   crumbs={[
-    { name: 'Els peixos', href: '/peixos' },
+    { name: 'Els peixos', href: '/peixos/' },
     { name: s.nom, href: s.url },
   ]}
   jsonLd={jsonLd}
@@ -52,7 +52,7 @@ const jsonLd = {
   <article class="sp">
     <header class="sp__head page">
       <p class="label sp__group">
-        <a href={`/peixos#${s.habitat}`} style={`--key:${s.habitatInfo.color}`}>
+        <a href={`/peixos/#${s.habitat}`} style={`--key:${s.habitatInfo.color}`}>
           {s.habitatInfo.nom}
         </a>
       </p>
@@ -146,7 +146,7 @@ const jsonLd = {
             <div>
               <dt>Per què és al catàleg</dt>
               <dd>
-                <a class="evid" href="/fonts#procedencia" data-ev={s.evidencia}>
+                <a class="evid" href="/fonts/#procedencia" data-ev={s.evidencia}>
                   {s.evidenciaInfo.curt}
                 </a>
                 {' '}{s.evidenciaInfo.nom}
@@ -207,7 +207,7 @@ const jsonLd = {
             ))}
           </div>
           <p class="sp__tornar">
-            <a href="/peixos">← Tot el catàleg</a>
+            <a href="/peixos/">← Tot el catàleg</a>
           </p>
         </section>
       )

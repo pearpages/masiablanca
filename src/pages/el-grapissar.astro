@@ -16,7 +16,7 @@ const description =
   description={description}
   image="/og/el-grapissar.png"
   imageAlt="Un cap-roig damunt la roca coral·lígena"
-  crumbs={[{ name: 'El grapissar', href: '/el-grapissar' }]}
+  crumbs={[{ name: 'El grapissar', href: '/el-grapissar/' }]}
 >
   <header class="art-head page">
     <p class="label">El lloc</p>
@@ -107,7 +107,7 @@ const description =
             <div>
               <p class="zone__depth data">{g.profunditat}</p>
               <h3 class="zone__nom">
-                <a href={`/peixos#${g.id}`}>{g.nom}</a>
+                <a href={`/peixos/#${g.id}`}>{g.nom}</a>
               </h3>
               <p class="zone__resum">{g.resum}</p>
               <p class="zone__count label">{g.species.length} espècies al catàleg</p>
@@ -134,7 +134,7 @@ const description =
         precisament la seva gràcia i la seva fragilitat.
       </p>
       <p>
-        <a href="/visitar">Com es pot visitar →</a>
+        <a href="/visitar/">Com es pot visitar →</a>
       </p>
     </div>
   </div>

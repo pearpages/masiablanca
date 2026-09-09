@@ -32,16 +32,25 @@ export const FACTS = {
   barresMax: 11, // m
 };
 
+/**
+ * Amb barra final, sempre. Amb build.format 'directory' cada pàgina és
+ * <ruta>/index.html, i un servidor amb semàntica de directori —el nostre és
+ * l'nginx de GitHub Pages, amb Fastly al davant cachejant-ho— respon 301 de
+ * <ruta> cap a <ruta>/ perquè sense barra els enllaços relatius serien ambigus.
+ * Aquí no hi corre res nostre: el lloc és estàtic. Un href sense barra, doncs,
+ * és un salt de redirecció a cada pàgina on surti. scripts/check-build.mjs ho
+ * comprova i fa petar la compilació.
+ */
 export const NAV = [
-  { href: '/historia', label: 'Història' },
-  { href: '/el-grapissar', label: 'El grapissar' },
-  { href: '/peixos', label: 'Els peixos' },
-  { href: '/visitar', label: 'Visitar-la' },
+  { href: '/historia/', label: 'Història' },
+  { href: '/el-grapissar/', label: 'El grapissar' },
+  { href: '/peixos/', label: 'Els peixos' },
+  { href: '/visitar/', label: 'Visitar-la' },
 ];
 
 export const FOOTER_NAV = [
-  { href: '/credits', label: 'Crèdits de les imatges' },
-  { href: '/fonts', label: 'Fonts i referències' },
+  { href: '/credits/', label: 'Crèdits de les imatges' },
+  { href: '/fonts/', label: 'Fonts i referències' },
 ];
 
 /**

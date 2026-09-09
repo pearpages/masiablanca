@@ -6,7 +6,7 @@ export const SITE = 'https://masiablanca.soms.cat';
 
 export default defineConfig({
   site: SITE,
-  trailingSlash: 'never',
+  trailingSlash: 'ignore',
   build: {
     format: 'directory',
     inlineStylesheets: 'auto',
@@ -15,17 +15,5 @@ export default defineConfig({
     // Wikimedia originals are large; every rendition is generated at build time.
     responsiveStyles: true,
   },
-  integrations: [
-    sitemap({
-      i18n: undefined,
-      changefreq: 'yearly',
-      lastmod: new Date('2026-08-06'),
-      serialize(item) {
-        if (item.url === `${SITE}/`) item.priority = 1.0;
-        else if (item.url.includes('/peixos/')) item.priority = 0.7;
-        else item.priority = 0.8;
-        return item;
-      },
-    }),
-  ],
+  integrations: [sitemap()],
 });

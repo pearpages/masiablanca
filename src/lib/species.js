@@ -85,7 +85,10 @@ function hydrate(entry) {
     habitatInfo: habitatById(entry.habitat),
     iucnInfo: entry.iucn ? IUCN[entry.iucn] : null,
     evidenciaInfo: EVIDENCIA[entry.evidencia] ?? EVIDENCIA.habitat,
-    url: `/peixos/${entry.slug}`,
+    /** Amb barra final: la URL realment servida — vegeu NAV a site.js. Aquesta
+     *  línia es propaga a les 199 targetes, als crèdits, a les fonts, als
+     *  breadcrumbs i a l'ItemList; sense barra, totes farien un 301. */
+    url: `/peixos/${entry.slug}/`,
     /** "4 – 11 m" */
     profunditatText: `${entry.profunditat[0]} – ${entry.profunditat[1]} m`,
     /** Alt text that describes the photograph, in Catalan. */

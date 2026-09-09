@@ -11,7 +11,7 @@ const {
   noindex = false,
 } = Astro.props;
 
-const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', SITE.url).href;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
 const ogImage = new URL(image, SITE.url).href;
 const fullTitle = title === SITE.longName ? title : `${title} · ${SITE.name}`;
 
@@ -20,7 +20,7 @@ const graph = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
-<link rel="canonical" href={canonical} />
+{!noindex && <link rel="canonical" href={canonical} />}
 {noindex && <meta name="robots" content="noindex,follow" />}
 
 <meta property="og:type" content={type} />

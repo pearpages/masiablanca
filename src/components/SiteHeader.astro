@@ -2,7 +2,10 @@
 import { NAV, SITE } from '../lib/site.js';
 import './SiteHeader.css';
 
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+// Es compara sense barra final als dos costats: així l'aria-current no depèn
+// de si NAV escriu '/peixos' o '/peixos/'.
+const strip = (p) => p.replace(/\/+$/, '') || '/';
+const path = strip(Astro.url.pathname);
 ---
 
 <header class="masthead">
@@ -27,7 +30,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
             <li>
               <a
                 href={item.href}
-                aria-current={path === item.href || path.startsWith(`${item.href}/`) ? 'page' : undefined}
+                aria-current={
+                  path === strip(item.href) || path.startsWith(`${strip(item.href)}/`)
+                    ? 'page'
+                    : undefined
+                }
               >
                 {item.label}
               </a>
