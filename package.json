@@ -15,9 +15,9 @@
     "check": "astro build && node scripts/check-build.mjs"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.6.0",
-    "@pearpages/credit": "^0.1.0",
-    "astro": "^5.16.0",
-    "sharp": "^0.34.4"
+    "@astrojs/sitemap": "^3.7.4",
+    "@pearpages/credit": "^0.2.0",
+    "astro": "^5.18.2",
+    "sharp": "^0.34.5"
   }
 }
